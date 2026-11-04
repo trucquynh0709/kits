@@ -245,8 +245,34 @@ function updateStatus(id, next, okMessage, { onError } = {}) {
   return true;
 }
 
-function confirmDelete(a) {
-  if (!confirm(`Xóa vĩnh viễn "${a.title}"?`)) return false;
+// Popup xác nhận riêng thay cho confirm() của trình duyệt ("localhost says…").
+const confirmDialogEl = $('#confirm-dialog');
+function askConfirm({ title, message, ok = 'Xóa' }) {
+  return new Promise((resolve) => {
+    $('#confirm-title').textContent = title;
+    $('#confirm-message').textContent = message;
+    $('#confirm-ok').textContent = ok;
+    const finish = (value) => {
+      confirmDialogEl.removeEventListener('close', onClose);
+      if (confirmDialogEl.open) confirmDialogEl.close();
+      resolve(value);
+    };
+    const onClose = () => finish(false); // Esc
+    confirmDialogEl.addEventListener('close', onClose);
+    $('#confirm-ok').onclick = () => finish(true);
+    $('#confirm-cancel').onclick = () => finish(false);
+    confirmDialogEl.onclick = (e) => e.target === confirmDialogEl && finish(false);
+    confirmDialogEl.showModal();
+    $('#confirm-cancel').focus();
+  });
+}
+
+async function confirmDelete(a) {
+  const ok = await askConfirm({
+    title: 'Xóa lịch hẹn?',
+    message: `"${a.title}" (${formatRange(a)}) sẽ bị xóa vĩnh viễn, không khôi phục được.`,
+  });
+  if (!ok) return false;
   persist(deleteAppointment(appointments, a.id));
   toast('Đã xóa lịch hẹn.');
   return true;
@@ -270,22 +296,46 @@ function statusActions(a, opts = {}) {
             run(STATUS.SCHEDULED, 'Đã khôi phục lịch hẹn.'),
           ),
         ];
-  buttons.push(actionButton('Xóa', 'danger delete', 'trash', () => confirmDelete(a) && opts.onDeleted?.()));
+  buttons.push(actionButton('Xóa', 'danger delete', 'trash', async () => (await confirmDelete(a)) && opts.onDeleted?.()));
   return buttons;
 }
 
 function itemState(a) {
-  if (a.status === STATUS.DONE) return 'Đã xong';
+  if (a.status === STATUS.DONE) return ''; // vòng tròn xanh đã thể hiện
   if (a.status === STATUS.CANCELLED) return 'Đã hủy';
   if (toMs(a.end) <= Date.now()) return 'Đã qua';
   return '';
 }
 
 // Mỗi dòng chỉ gồm giờ, tiêu đề, trạng thái; bấm vào để mở chi tiết và thao tác.
+// Dòng lịch: vòng tròn đánh dấu xong | giờ + tiêu đề (bấm để xem chi tiết) | thùng rác.
 function renderItem(a) {
-  const btn = el(
+  const done = a.status === STATUS.DONE;
+  const check =
+    a.status === STATUS.CANCELLED
+      ? el('span', { className: 'check-slot' })
+      : el(
+          'button',
+          {
+            type: 'button',
+            className: `check${done ? ' on' : ''}`,
+            title: done ? 'Bỏ đánh dấu xong' : 'Đánh dấu đã xong',
+          },
+          done ? icon('check', { size: 14 }) : null,
+        );
+  check.setAttribute?.('aria-label', done ? `Bỏ đánh dấu xong "${a.title}"` : `Đánh dấu xong "${a.title}"`);
+  if (check.tagName === 'BUTTON') {
+    check.setAttribute('aria-pressed', String(done));
+    check.addEventListener('click', () =>
+      done
+        ? updateStatus(a.id, STATUS.SCHEDULED, 'Đã bỏ đánh dấu xong.')
+        : updateStatus(a.id, STATUS.DONE, 'Đã đánh dấu hoàn thành.'),
+    );
+  }
+
+  const open = el(
     'button',
-    { type: 'button', className: `item is-${a.status}${highlightIds.has(a.id) ? ' highlight' : ''}`, title: 'Xem chi tiết' },
+    { type: 'button', className: 'item-open', title: 'Xem chi tiết' },
     el('span', { className: 'time', textContent: formatRange(a) }),
     el(
       'span',
@@ -295,8 +345,19 @@ function renderItem(a) {
     ),
     el('span', { className: 'state', textContent: itemState(a) }),
   );
-  btn.addEventListener('click', () => openDetail(a.id));
-  return btn;
+  open.addEventListener('click', () => openDetail(a.id));
+
+  const trash = el('button', { type: 'button', className: 'icon-btn trash', title: 'Xóa' }, icon('trash', { size: 16 }));
+  trash.setAttribute('aria-label', `Xóa "${a.title}"`);
+  trash.addEventListener('click', () => confirmDelete(a));
+
+  return el(
+    'div',
+    { className: `item is-${a.status}${highlightIds.has(a.id) ? ' highlight' : ''}` },
+    check,
+    open,
+    trash,
+  );
 }
 
 // ---------- popup chi tiết ----------

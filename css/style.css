@@ -89,6 +89,8 @@ body {
 .btn.primary { color: #fff; background: var(--accent); border-color: var(--accent); font-weight: 600; }
 .btn.primary:hover { background: var(--accent-hover); border-color: var(--accent-hover); }
 .btn.danger { color: var(--cancel); }
+.btn.danger-fill { color: #fff; background: var(--cancel); border-color: var(--cancel); font-weight: 600; }
+.btn.danger-fill:hover { background: #a93725; border-color: #a93725; }
 .btn:disabled { opacity: 0.45; cursor: not-allowed; }
 
 .link-btn { font: inherit; font-size: 0.86rem; color: var(--muted); background: none; border: none; padding: 0; cursor: pointer; }
@@ -181,20 +183,53 @@ body {
 
 .item {
   display: grid;
+  grid-template-columns: 22px 1fr 32px;
+  gap: 12px;
+  align-items: center;
+  border-radius: 10px;
+  padding: 6px 8px 6px 14px;
+}
+.item:hover { background: var(--hover); }
+.item-open {
+  display: grid;
   grid-template-columns: 104px 1fr auto;
   gap: 16px;
   align-items: center;
-  width: 100%;
+  min-width: 0;
   font: inherit;
   color: inherit;
   text-align: left;
   background: none;
   border: none;
-  border-radius: 10px;
-  padding: 11px 16px;
+  padding: 5px 0;
   cursor: pointer;
+  border-radius: 6px;
 }
-.item:hover { background: var(--hover); }
+.item-open:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+
+/* Vòng tròn đánh dấu xong */
+.check {
+  width: 20px;
+  height: 20px;
+  border-radius: 50%;
+  border: 1.5px solid var(--faint);
+  background: var(--card);
+  display: grid;
+  place-items: center;
+  padding: 0;
+  color: #fff;
+  cursor: pointer;
+  transition: border-color 0.12s, background 0.12s;
+}
+.check:hover { border-color: var(--done); }
+.check.on { background: var(--done); border-color: var(--done); }
+.check:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+
+/* Thùng rác: chỉ hiện khi rê chuột / focus; thiết bị cảm ứng thì luôn hiện */
+.icon-btn.trash { opacity: 0; }
+.item:hover .icon-btn.trash, .icon-btn.trash:focus-visible { opacity: 1; }
+.icon-btn.trash:hover { color: var(--cancel); background: #fbefec; }
+@media (hover: none) { .icon-btn.trash { opacity: 1; } }
 .item .time { font-size: 0.86rem; color: var(--muted); font-variant-numeric: tabular-nums; white-space: nowrap; }
 .item .item-body { min-width: 0; display: flex; flex-direction: column; }
 .item .title { font-weight: 500; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
@@ -207,7 +242,8 @@ body {
 .item.is-cancelled .state { color: var(--cancel); }
 .item.highlight { background: var(--warn-bg); box-shadow: inset 3px 0 0 var(--warn-line); }
 @media (max-width: 560px) {
-  .item { grid-template-columns: 1fr auto; gap: 2px 12px; }
+  .item { padding-left: 10px; }
+  .item-open { grid-template-columns: 1fr auto; gap: 2px 12px; }
   .item .time { grid-column: 1; }
   .item .item-body { grid-column: 1; grid-row: 2; }
   .item .state { grid-column: 2; grid-row: 1 / span 2; }
@@ -235,6 +271,9 @@ body {
 .modal-head h2 { margin: 0; font-size: 1.15rem; font-weight: 700; }
 .modal-head .icon-btn { margin: -6px -8px 0 0; }
 .modal-actions { display: flex; justify-content: flex-end; gap: 8px; margin-top: 8px; }
+.modal.confirm { width: min(380px, calc(100% - 32px)); }
+.modal.confirm h2 { margin: 0 0 6px; font-size: 1.05rem; font-weight: 700; }
+.modal.confirm p { margin: 0 0 18px; font-size: 0.9rem; overflow-wrap: anywhere; }
 
 /* ---------- form ---------- */
 .field { display: flex; flex-direction: column; gap: 6px; margin-bottom: 14px; font-size: 0.84rem; font-weight: 500; color: var(--muted); }

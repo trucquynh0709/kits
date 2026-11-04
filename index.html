@@ -147,6 +147,15 @@
       <div id="detail-actions" class="detail-actions"></div>
     </dialog>
 
+    <dialog id="confirm-dialog" class="modal confirm" aria-labelledby="confirm-title">
+      <h2 id="confirm-title"></h2>
+      <p id="confirm-message" class="muted"></p>
+      <div class="modal-actions">
+        <button type="button" class="btn" id="confirm-cancel">Không</button>
+        <button type="button" class="btn danger-fill" id="confirm-ok">Xóa</button>
+      </div>
+    </dialog>
+
     <div id="toast" class="toast" role="status" hidden></div>
 
     <script type="module" src="src/app.js"></script>

@@ -137,7 +137,7 @@ check(
 
 // Thao tác trên một lịch: mở popup chi tiết rồi bấm nút theo nhãn
 const act = (findExpr, label) => `(() => {
-  ${findExpr}.click();
+  ${findExpr}.querySelector('.item-open').click();
   [...document.querySelectorAll('#detail-actions .btn')].find((b) => b.textContent.trim() === ${JSON.stringify(label)}).click();
 })()`;
 const closeDetail = () => evaluate("document.querySelector('#detail-dialog').open && document.querySelector('#detail-close').click()");
@@ -227,7 +227,7 @@ check(
   await evaluate(`(() => {
     const item = document.querySelector('.item.is-scheduled');
     const title = item.querySelector('.title').textContent;
-    item.click();
+    item.querySelector('.item-open').click();
     const d = document.querySelector('#detail-dialog');
     return d.open && document.querySelector('#detail-title').textContent === title &&
       document.querySelectorAll('#detail-rows li').length >= 3 && /giờ|phút/.test(document.querySelector('#detail-rows').textContent);
@@ -243,6 +243,40 @@ check(
 await evaluate("document.querySelector('#detail-actions .btn').click()"); // Bỏ đánh dấu
 await evaluate("document.querySelector('#detail-close').click()");
 check('E2E-28 đóng popup chi tiết', await evaluate("!document.querySelector('#detail-dialog').open"));
+
+// Thao tác nhanh trên dòng: vòng tròn đánh dấu xong + thùng rác với popup xác nhận riêng
+await evaluate("document.querySelector('.item.is-scheduled .check').click()");
+check('E2E-29 bấm vòng tròn trên dòng → đánh dấu xong ngay, không cần mở chi tiết', await evaluate(
+  "!document.querySelector('#detail-dialog').open && document.querySelectorAll('.item.is-done .check.on').length >= 1",
+));
+const doneBefore = await evaluate("document.querySelectorAll('.item.is-done').length");
+await evaluate("document.querySelector('.item.is-done .check').click()");
+check('E2E-30 bấm lại vòng tròn → bỏ đánh dấu', (await evaluate("document.querySelectorAll('.item.is-done').length")) === doneBefore - 1);
+
+const rows = () => evaluate("document.querySelectorAll('#list .item').length");
+const rowsBefore = await rows();
+await evaluate("document.querySelector('.item .trash').click()");
+check('E2E-31 bấm thùng rác → mở popup xác nhận của app (không phải confirm của trình duyệt)', await evaluate(
+  "document.querySelector('#confirm-dialog').open && document.querySelector('#confirm-message').textContent.includes('xóa vĩnh viễn')",
+));
+await sleep(300);
+await shot('09-confirm-delete.png');
+await evaluate("document.querySelector('#confirm-cancel').click()");
+check('E2E-32 bấm "Không" → không xóa', !(await evaluate("document.querySelector('#confirm-dialog').open")) && (await rows()) === rowsBefore);
+await evaluate("document.querySelector('.item .trash').click()");
+await evaluate("document.querySelector('#confirm-ok').click()");
+await sleep(100);
+check('E2E-33 bấm "Xóa" → xóa đúng 1 lịch', (await rows()) === rowsBefore - 1);
+await evaluate("document.querySelector('.item .item-open').click()");
+await evaluate("document.querySelector('#detail-actions .btn.delete').click()");
+check('E2E-34 xóa từ popup chi tiết → popup xác nhận hiện chồng lên', await evaluate(
+  "document.querySelector('#confirm-dialog').open && document.querySelector('#detail-dialog').open",
+));
+await evaluate("document.querySelector('#confirm-ok').click()");
+await sleep(100);
+check('E2E-35 xác nhận → đóng cả hai popup, xóa thêm 1 lịch', (await rows()) === rowsBefore - 2 && !(await evaluate(
+  "document.querySelector('#confirm-dialog').open || document.querySelector('#detail-dialog').open",
+)));
 
 const before = await evaluate("document.querySelectorAll('#list .item').length");
 await evaluate("document.querySelector('#btn-logout').click()");
