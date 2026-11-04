@@ -32,7 +32,8 @@ flowchart LR
         UC1a([Kiểm tra dữ liệu hợp lệ])
         UC1b([Kiểm tra trùng giờ])
         UC1c([Gợi ý khung giờ trống])
-        UC2([Xem danh sách theo ngày])
+        UC2([Xem danh sách: theo ngày trên lịch / theo tab trạng thái])
+        UC8([Xem chi tiết lịch hẹn])
         UC3([Đánh dấu đã xong])
         UC4([Hủy lịch hẹn])
         UC5([Khôi phục lịch hẹn])
@@ -43,10 +44,11 @@ flowchart LR
     UC0 --- G
     U --- UC1
     U --- UC2
-    U --- UC3
-    U --- UC4
-    U --- UC5
-    U --- UC6
+    U --- UC8
+    UC8 -. extend .-> UC3
+    UC8 -. extend .-> UC4
+    UC8 -. extend .-> UC5
+    UC8 -. extend .-> UC6
     UC1 -. include .-> UC1a
     UC1 -. include .-> UC1b
     UC5 -. include .-> UC1b
@@ -106,12 +108,24 @@ classDiagram
         +loadAppointments(userId) Appointment[]
         +saveAppointments(userId, list) bool
     }
+    class calendar_js {
+        <<module — logic thuần, có unit test>>
+        +monthGrid(year, month) Cell[42]
+        +countByDate(list) Map
+        +relativeDay(date, today) string
+    }
+    class icons_js {
+        <<module>>
+        +icon(name, size) SVGElement
+    }
     class app_js {
         <<module — UI/DOM>>
     }
     User "1" --> "*" Appointment : sở hữu
     Appointment --> Status
     app_js ..> auth_js : gọi
+    app_js ..> calendar_js : gọi
+    app_js ..> icons_js : gọi
     auth_js ..> User : tạo
     app_js ..> scheduler_js : gọi
     app_js ..> storage_js : gọi

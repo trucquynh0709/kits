@@ -1,5 +1,7 @@
 # 📅 Lịch Hẹn Mini
 
+[![test](https://github.com/trucquynh0709/kits/actions/workflows/test.yml/badge.svg)](https://github.com/trucquynh0709/kits/actions/workflows/test.yml)
+
 Website đặt và quản lý lịch hẹn cá nhân, **tự động chặn lịch trùng giờ và gợi ý khung giờ trống gần nhất**.
 
 - 🔗 **Bản chạy thực tế:** `<dán link Vercel/Netlify>`
@@ -192,6 +194,7 @@ Những mục dưới đây **cố ý không làm** để luồng chính chạy 
 - **Làm rõ đề trước khi code:** đề chỉ ghi "ngày giờ", nhưng muốn kiểm tra trùng thì phải có khoảng thời gian. Phát hiện điều này ngay ngày 1 nên tránh được việc phải làm lại.
 - **Viết test cho trường hợp biên làm lộ lỗi thiết kế:** khi viết test chuyển trạng thái mới thấy lỗi khôi phục lịch gây trùng (R4).
 - **`Date` của JavaScript dễ sai ngầm:** `new Date(2026, 1, 30)` không báo lỗi. Cần tự kiểm tra lại.
+- **Đặt tính năng vào đúng chỗ thay vì thêm chỗ mới:** giao diện từng bị góp ý "rối mắt". Nguyên nhân không phải do thiếu trang trí mà do cùng một thao tác xuất hiện ở hai nơi (nút trên từng dòng và trong popup) và quá nhiều thứ được tô màu. Dồn thao tác vào popup chi tiết, gộp bộ lọc thành một hàng tab là đủ để màn hình dễ nhìn hơn hẳn.
 - **Tìm giải pháp nhỏ hơn trước khi cắt:** ban đầu định cắt social login vì tưởng phải dựng backend (1,5–2 ngày). Xem lại thì Google Identity Services chạy được hoàn toàn phía client, chỉ mất khoảng nửa ngày, nên đã đưa lại vào phạm vi. Bài học: khi một tính năng có vẻ quá to, hãy tìm phiên bản tối thiểu của nó trước khi bỏ hẳn.
 
 ## 12. Tài liệu
