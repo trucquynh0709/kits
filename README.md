@@ -24,7 +24,7 @@ Người dùng ghi lịch hẹn rải rác ở giấy note, tin nhắn, ứng d�
 | Danh sách lịch hẹn theo ngày | ✅ Nhóm theo ngày, lọc theo ngày, nhãn "Hôm nay", ẩn/hiện lịch hủy | ảnh 03 |
 | Đánh dấu đã xong / hủy | ✅ Thêm Khôi phục, Bỏ đánh dấu, Xóa | ảnh 03 |
 | Kiểm tra trùng giờ | ✅ Chặn trùng, liệt kê và highlight lịch bị trùng, **gợi ý giờ trống** | ảnh 02 |
-| Test case cho tạo lịch trùng | ✅ 13 unit test riêng cho tạo lịch trùng (tổng 52) + 37 e2e + 33 test thủ công | [docs/TEST_CASES.md](docs/TEST_CASES.md) |
+| Test case cho tạo lịch trùng | ✅ 13 unit test riêng cho tạo lịch trùng (tổng 52) + 41 e2e + 33 test thủ công | [docs/TEST_CASES.md](docs/TEST_CASES.md) |
 | README + log công việc | ✅ | file này, [docs/DAILY_LOG.md](docs/DAILY_LOG.md) |
 | Demo chức năng chính | ✅ Bản chạy thật, trang chủ giới thiệu dự án, ảnh chụp | https://kits-opal.vercel.app, [docs/screenshots/](docs/screenshots/) |
 | Đăng nhập (khuyến nghị: social login) | ✅ **Đăng nhập Google**, mỗi tài khoản có dữ liệu riêng; có thêm chế độ khách | ảnh 00, [src/auth.js](src/auth.js) |
@@ -44,7 +44,7 @@ Người dùng ghi lịch hẹn rải rác ở giấy note, tin nhắn, ứng d�
 
 ## 4. Chức năng
 
-0. **Đăng nhập bằng Google** (social login) hoặc **dùng thử không đăng nhập**. Mỗi tài khoản có danh sách lịch riêng, có avatar và nút đăng xuất.
+0. **Trang chủ → Đăng nhập → Ứng dụng:** chưa đăng nhập thì trang chủ là trang giới thiệu dự án; nút "Bắt đầu sử dụng" sang **trang đăng nhập riêng** (`#dang-nhap`): Google hoặc dùng thử. Mỗi tài khoản có danh sách lịch riêng. Tài khoản Google có nút Đăng xuất; khách thì có nút **Đăng nhập** để chuyển sang Google. Đã đăng nhập vẫn xem lại được trang giới thiệu qua link "Giới thiệu".
 1. **Tạo lịch hẹn** (action chính): nút **"Tạo lịch hẹn"** ở góc trên bên phải (trên điện thoại là nút nổi góc dưới) mở popup. Giờ mặc định là **khung trống 30 phút đầu tiên** trong ngày. Popup gồm tiêu đề (bắt buộc, ≤100 ký tự), ngày, giờ bắt đầu, giờ kết thúc, ghi chú (≤500 ký tự).
 2. **Validation theo từng ô:** thiếu tiêu đề, ngày không tồn tại, giờ kết thúc ≤ giờ bắt đầu, lịch trong quá khứ, lịch dài quá 24h, ghi chú quá dài.
 3. **Kiểm tra trùng giờ:**
@@ -174,7 +174,7 @@ Những mục dưới đây **cố ý không làm** để luồng chính chạy 
 - Xử lý được một **case khó** dễ bỏ sót: khôi phục lịch đã hủy khi khung giờ đã bị chiếm (TC-30, E2E-14).
 - Có thêm **gợi ý giờ trống**, nên app không chỉ báo lỗi mà còn giúp người dùng đặt được lịch.
 - Có social login mà vẫn giữ được kiến trúc không backend, và dữ liệu cũ được chuyển sang tài khoản khách tự động.
-- 3 lớp kiểm thử (52 unit, 37 e2e, 33 test thủ công, trong đó 3 case Google chờ test với Client ID thật), có CI. Project 0 dependency nên ai clone về cũng chạy được ngay.
+- 3 lớp kiểm thử (52 unit, 41 e2e, 33 test thủ công, trong đó 3 case Google chờ test với Client ID thật), có CI. Project 0 dependency nên ai clone về cũng chạy được ngay.
 - Phạm vi được quản lý chủ động: phần cắt đều có lý do, rủi ro được ghi lại.
 
 **Điểm yếu**

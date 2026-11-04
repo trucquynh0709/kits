@@ -652,85 +652,119 @@ $('#btn-seed').addEventListener('click', () => {
   toast(added ? `Đã thêm ${added} lịch mẫu vào ngày mai.` : 'Lịch mẫu đã có sẵn (trùng giờ nên không thêm lại).');
 });
 
-// ---------- đăng nhập ----------
-function showApp(nextUser) {
+// ---------- điều hướng: trang chủ (/) · đăng nhập (#dang-nhap) · ứng dụng ----------
+// Chưa đăng nhập: "/" là trang giới thiệu. Đã đăng nhập: "/" là ứng dụng, "#gioi-thieu" xem lại trang giới thiệu.
+const ROUTES = { login: '#dang-nhap', intro: '#gioi-thieu' };
+let googleRendered = false;
+
+function setView(name) {
+  $('#landing-view').hidden = name !== 'landing';
+  $('#auth-view').hidden = name !== 'auth';
+  $('#app-view').hidden = name !== 'app';
+  $('#nav-login').hidden = !(name === 'landing' && !user);
+  $('#nav-app').hidden = !(name !== 'app' && user);
+  $('#btn-intro').hidden = name !== 'app';
+  $('#btn-new').hidden = name !== 'app';
+  $('#user-chip').hidden = !(name === 'app' && user);
+  for (const id of ['#hero-start', '#closing-start']) $(id).textContent = user ? 'Vào ứng dụng' : 'Bắt đầu sử dụng';
+  if (name !== 'app') {
+    closeForm();
+    if (detailDialog.open) detailDialog.close();
+  }
+}
+
+function route() {
+  const h = location.hash;
+  if (h === ROUTES.login) {
+    setView('auth');
+    $('#login-error').textContent = '';
+    $('#btn-guest').textContent = user?.guest ? 'Tiếp tục với tư cách khách' : 'Dùng thử không cần đăng nhập';
+    renderGoogleOnce();
+  } else if (user && h !== ROUTES.intro) {
+    setView('app');
+    render();
+  } else {
+    setView('landing');
+  }
+}
+
+// Mục lục trong trang giới thiệu cũng đổi hash (#van-de…): chỉ điều hướng khi hash là một "trang".
+addEventListener('hashchange', () => {
+  const h = location.hash;
+  if (h === '' || h === ROUTES.login || h === ROUTES.intro) {
+    route();
+    scrollTo(0, 0);
+  }
+});
+
+function goHome() {
+  history.pushState(null, '', location.pathname + location.search);
+  route();
+  scrollTo(0, 0);
+}
+
+function signIn(nextUser) {
   user = nextUser;
   saveSession(user);
   appointments = loadAppointments(user.id);
   highlightIds = new Set();
-  closeForm();
   statusFilter = null;
   filterDate.value = '';
 
   $('#user-name').textContent = user.guest ? 'Khách' : user.name;
-  $('#user-name').title = user.email;
+  $('#user-name').title = user.email ?? '';
   const avatar = $('#user-avatar');
   avatar.hidden = !user.picture;
   if (user.picture) avatar.src = user.picture;
   $('#user-initial').hidden = !!user.picture;
   if (user.guest) $('#user-initial').replaceChildren(icon('user', { size: 16 }));
   else $('#user-initial').textContent = user.name.trim().charAt(0).toUpperCase();
-  $('#user-chip').hidden = false;
-  $('#btn-new').hidden = false;
-  $('#btn-intro').hidden = false;
-  $('#nav-start').hidden = true;
-  $('#login-view').hidden = true;
-  $('#app-view').hidden = false;
-  render();
+  // Khách không có gì để "đăng xuất": hiện nút Đăng nhập để chuyển sang tài khoản Google.
+  $('#btn-logout').hidden = !!user.guest;
+  $('#btn-signin').hidden = !user.guest;
 }
 
-// Trang chủ khi chưa đăng nhập là landing giới thiệu dự án, thẻ đăng nhập nằm ngay phần đầu.
-function showLogin() {
-  user = null;
-  appointments = [];
-  $('#login-options').hidden = false;
-  $('#continue-options').hidden = true;
-  $('#nav-start').hidden = false;
-  $('#btn-intro').hidden = true;
-  $('#user-chip').hidden = true;
-  $('#btn-new').hidden = true;
-  closeForm();
-  if (detailDialog.open) detailDialog.close();
-  $('#app-view').hidden = true;
-  $('#login-view').hidden = false;
-  $('#login-error').textContent = '';
-}
-
-$('#btn-guest').addEventListener('click', () => showApp(guestUser()));
-
-// Đang đăng nhập vẫn xem lại được landing; thẻ đăng nhập đổi thành "Vào ứng dụng".
-$('#btn-intro').addEventListener('click', () => {
-  $('#app-view').hidden = true;
-  $('#login-view').hidden = false;
-  $('#login-options').hidden = true;
-  $('#continue-options').hidden = false;
-  $('#btn-new').hidden = true;
-  $('#btn-intro').hidden = true;
-  scrollTo(0, 0);
-});
-$('#btn-continue').addEventListener('click', () => showApp(user));
-$('#btn-logout').addEventListener('click', () => {
+function signOut() {
   signOutGoogle();
   saveSession(null);
-  showLogin();
-});
+  user = null;
+  appointments = [];
+  goHome();
+}
 
-if (GOOGLE_CLIENT_ID) {
+const startOrContinue = () => (user ? goHome() : (location.hash = ROUTES.login));
+$('#hero-start').addEventListener('click', startOrContinue);
+$('#closing-start').addEventListener('click', startOrContinue);
+$('#nav-app').addEventListener('click', goHome);
+$('#btn-intro').addEventListener('click', () => (location.hash = ROUTES.intro));
+$('#auth-back').addEventListener('click', goHome);
+$('#btn-guest').addEventListener('click', () => {
+  signIn(user?.guest ? user : guestUser());
+  goHome();
+});
+$('#btn-logout').addEventListener('click', signOut);
+
+function renderGoogleOnce() {
+  if (googleRendered) return;
+  googleRendered = true;
+  if (!GOOGLE_CLIENT_ID) {
+    // Chưa có Client ID: chỉ hiện chế độ khách, không làm người dùng bối rối bằng thông báo cấu hình.
+    $('#google-btn').hidden = true;
+    $('#login-divider').hidden = true;
+    console.info('[Lịch Hẹn Mini] Chưa đặt GOOGLE_CLIENT_ID trong src/config.js → nút Đăng nhập Google bị ẩn.');
+    return;
+  }
   renderGoogleButton($('#google-btn'), {
     clientId: GOOGLE_CLIENT_ID,
     onLogin: (u) => {
-      showApp(u);
+      signIn(u);
+      goHome();
       toast(`Xin chào ${u.name}!`);
     },
     onError: (msg) => ($('#login-error').textContent = msg),
   });
-} else {
-  // Chưa có Client ID: chỉ hiện chế độ khách, không làm người dùng bối rối bằng thông báo cấu hình.
-  $('#google-btn').hidden = true;
-  $('#login-divider').hidden = true;
-  console.info('[Lịch Hẹn Mini] Chưa đặt GOOGLE_CLIENT_ID trong src/config.js → nút Đăng nhập Google bị ẩn.');
 }
 
 const session = loadSession();
-if (session) showApp(session);
-else showLogin();
+if (session) signIn(session);
+route();

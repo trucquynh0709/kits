@@ -64,7 +64,13 @@ await send('Page.navigate', { url: APP });
 await sleep(800);
 await evaluate('localStorage.clear(); location.reload()');
 await sleep(800);
-await sleep(2500);
+await sleep(1500);
+await shot('00-landing.png');
+const visible = (sel) => evaluate(`!document.querySelector('${sel}').hidden`);
+const landingOk = (await visible('#landing-view')) && !(await visible('#auth-view')) && !(await visible('#app-view'));
+await evaluate("document.querySelector('#hero-start').click()");
+await sleep(2000);
+const authPageOk = await evaluate("location.hash === '#dang-nhap' && !document.querySelector('#auth-view').hidden && document.querySelector('#landing-view').hidden");
 await shot('00-login.png');
 // Headless không đăng nhập Google được, nên test luồng chính bằng chế độ khách
 await evaluate("document.querySelector('#btn-guest').click()");
@@ -85,7 +91,10 @@ const results = [];
 const check = (name, cond) => {
   results.push(`${cond ? 'PASS' : 'FAIL'}  ${name}`);
 };
-check('E2E-0 vào app ở chế độ khách', await evaluate("!document.querySelector('#app-view').hidden && document.querySelector('#login-view').hidden"));
+check('E2E-36 mở trang chủ khi chưa đăng nhập → trang giới thiệu, không phải app', landingOk);
+check('E2E-37 bấm "Bắt đầu sử dụng" → sang trang đăng nhập riêng (#dang-nhap)', authPageOk);
+check('E2E-0 chọn dùng thử → vào app ở chế độ khách', await evaluate("!document.querySelector('#app-view').hidden && document.querySelector('#auth-view').hidden && location.hash === ''"));
+check('E2E-38 khách không có nút "Đăng xuất", có nút "Đăng nhập"', await evaluate("document.querySelector('#btn-logout').hidden && !document.querySelector('#btn-signin').hidden"));
 const dialogOpen = () => evaluate("document.querySelector('#appt-dialog').open");
 await evaluate("document.querySelector('#btn-new').click()");
 check('E2E-18 bấm CTA "Tạo lịch hẹn" → mở popup', await dialogOpen());
@@ -286,11 +295,21 @@ check('E2E-35 xác nhận → đóng cả hai popup, xóa thêm 1 lịch', (awai
 )));
 
 const before = await evaluate("document.querySelectorAll('#list .item').length");
-await evaluate("document.querySelector('#btn-logout').click()");
-check('E2E-15 đăng xuất → về màn hình đăng nhập, ẩn dữ liệu', await evaluate("!document.querySelector('#login-view').hidden && document.querySelector('#app-view').hidden"));
-await evaluate("document.querySelector('#btn-guest').click()");
+await evaluate("document.querySelector('#btn-intro').click()");
+await sleep(100);
+check('E2E-15 đang dùng app bấm "Giới thiệu" → trang giới thiệu, nút chính đổi thành "Vào ứng dụng"', await evaluate(
+  "!document.querySelector('#landing-view').hidden && document.querySelector('#app-view').hidden && document.querySelector('#hero-start').textContent === 'Vào ứng dụng'",
+));
+await evaluate("document.querySelector('#hero-start').click()");
+await sleep(100);
 await evaluate("document.querySelector('#btn-all').click()");
-check('E2E-16 vào lại cùng tài khoản → dữ liệu còn', (await count()) >= before);
+check('E2E-16 quay lại ứng dụng → dữ liệu còn nguyên', (await visible('#app-view')) && (await count()) >= before);
+await evaluate("document.querySelector('#btn-signin').click()");
+await sleep(200);
+check('E2E-39 khách bấm "Đăng nhập" → sang trang đăng nhập, nút khách đổi thành "Tiếp tục với tư cách khách"', await evaluate(
+  "!document.querySelector('#auth-view').hidden && document.querySelector('#btn-guest').textContent === 'Tiếp tục với tư cách khách'",
+));
+await evaluate("document.querySelector('#btn-guest').click()");
 
 // Màn hình điện thoại
 await send('Emulation.setDeviceMetricsOverride', { width: 390, height: 1200, deviceScaleFactor: 1, mobile: true });

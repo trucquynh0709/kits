@@ -35,7 +35,7 @@ Một website đặt lịch hẹn cá nhân, chạy end-to-end, **không cho t�
 | 3.12 | Tinh gọn giao diện (phản hồi "rối mắt, trông như AI") | N5 | 2h | Bỏ trang kiểu landing, bỏ nút trên từng dòng (thao tác dồn vào popup), gộp lọc thành 1 hàng tab, chỉ 1 màu nhấn | ✅ |
 | 3.13 | Thao tác nhanh trên dòng (nút ✓ / 🗑 hiện khi rê chuột) + popup xác nhận riêng thay `confirm()` | N5 | 1h | Đánh dấu xong/xóa không cần mở chi tiết; xóa luôn hỏi lại bằng popup cùng phong cách | ✅ |
 | 4.1 | Unit test logic | N2–N3, N5 | (trong 2.x, 3.6) | `npm test` pass 52/52 | ✅ |
-| 4.2 | E2E smoke test trên trình duyệt | N5 | 1.5h | `node scripts/e2e-smoke.js` pass 37/37, tự chụp ảnh màn hình | ✅ |
+| 4.2 | E2E smoke test trên trình duyệt | N5 | 1.5h | `node scripts/e2e-smoke.js` pass 41/41, tự chụp ảnh màn hình | ✅ |
 | 4.3 | Test thủ công theo TEST_CASES.md | N5 | 1h | Mọi case có kết quả Pass/Fail | ✅ |
 | **5** | **Triển khai & bàn giao** | | | | |
 | 5.1 | Đẩy GitHub + CI chạy test | N6 | 0.5h | GitHub Actions xanh | ✅ |

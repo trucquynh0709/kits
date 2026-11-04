@@ -5,7 +5,7 @@ Có 3 lớp kiểm thử:
 | Lớp | Cách chạy | Kết quả |
 |---|---|---|
 | Unit test (`tests/scheduler.test.js`, `auth.test.js`, `calendar.test.js`) | `npm test` | **52/52 pass** |
-| E2E smoke test trên trình duyệt thật (tự động hoá phần lớn bảng A) | `npm start` rồi `node scripts/e2e-smoke.js` | **37/37 pass** |
+| E2E smoke test trên trình duyệt thật (tự động hoá phần lớn bảng A) | `npm start` rồi `node scripts/e2e-smoke.js` | **41/41 pass** |
 | Test thủ công (bảng dưới) | Theo các bước trong bảng | **30/33 pass**, 3 case chờ test với Google Client ID thật |
 
 ## A. Test thủ công
@@ -60,8 +60,8 @@ Có 3 lớp kiểm thử:
 
 | ID | Bước thực hiện | Kết quả mong đợi | Kết quả |
 |---|---|---|---|
-| TC-T21 | Mở trang lần đầu, bấm "Dùng thử không đăng nhập" | Vào app; góc phải hiện "Khách (chưa đăng nhập)" | ✅ Pass |
-| TC-T22 | Bấm "Đăng xuất", rồi vào lại chế độ khách | Về màn hình đăng nhập, danh sách bị ẩn; vào lại thì lịch cũ vẫn còn | ✅ Pass |
+| TC-T21 | Mở trang chủ lần đầu → "Bắt đầu sử dụng" → trang Đăng nhập → "Dùng thử không cần đăng nhập" | Trang chủ là trang giới thiệu; đăng nhập là trang riêng (`#dang-nhap`); vào app, góc phải hiện "Khách" kèm nút **Đăng nhập** (không có "Đăng xuất") | ✅ Pass |
+| TC-T22 | Đang là khách bấm "Đăng nhập" → "Tiếp tục với tư cách khách"; bấm "Giới thiệu" → "Vào ứng dụng"; nhấn Back ở trang đăng nhập | Lịch cũ vẫn còn ở mọi bước; Back quay về trang trước | ✅ Pass |
 | TC-T23 | Đã cấu hình Client ID: bấm "Đăng nhập bằng Google", chọn tài khoản A | Vào app, hiện avatar và tên tài khoản A; toast "Xin chào…" | ⏳ Chờ test |
 | TC-T24 | Tài khoản A tạo 1 lịch → Đăng xuất → đăng nhập tài khoản B | B không thấy lịch của A; đăng nhập lại A thì thấy lại (logic đã có unit test AU-07) | ⏳ Chờ test |
 | TC-T25 | Đang đăng nhập Google, nhấn F5 | Vẫn ở trong app, không phải đăng nhập lại | ⏳ Chờ test |

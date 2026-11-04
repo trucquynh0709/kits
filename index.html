@@ -21,7 +21,8 @@
           <strong>Lịch Hẹn Mini</strong>
         </a>
         <div class="top-actions">
-          <a class="link-btn" href="#start" id="nav-start">Đăng nhập</a>
+          <a class="link-btn" href="#dang-nhap" id="nav-login">Đăng nhập</a>
+          <button type="button" class="btn primary" id="nav-app" hidden>Vào ứng dụng</button>
           <button type="button" class="link-btn" id="btn-intro" hidden>Giới thiệu</button>
           <button type="button" class="btn primary cta" id="btn-new" hidden><i data-icon="plus" data-size="16"></i>Tạo lịch hẹn</button>
           <div id="user-chip" class="user-chip" hidden>
@@ -29,12 +30,13 @@
             <span id="user-initial" class="avatar-fallback" aria-hidden="true"></span>
             <span id="user-name"></span>
             <button type="button" class="link-btn" id="btn-logout">Đăng xuất</button>
+            <a class="link-btn accent" href="#dang-nhap" id="btn-signin" hidden>Đăng nhập</a>
           </div>
         </div>
       </div>
     </header>
 
-    <main id="login-view" class="landing" hidden>
+    <main id="landing-view" class="landing" hidden>
       <section class="wrap hero">
         <div class="hero-text">
           <h1>Đặt lịch hẹn,<br />không lo trùng giờ.</h1>
@@ -47,22 +49,12 @@
             <li>Gợi ý giờ trống chỉ với một lần bấm</li>
             <li>Lịch tháng, lọc theo ngày và trạng thái</li>
           </ul>
+          <div class="hero-cta">
+            <button type="button" class="btn primary" id="hero-start">Bắt đầu sử dụng</button>
+            <a class="btn" href="#cach-hoat-dong">Xem cách hoạt động</a>
+          </div>
         </div>
 
-        <div class="login-card" id="start">
-          <h2>Bắt đầu</h2>
-          <p class="muted">Mỗi tài khoản có danh sách lịch hẹn riêng.</p>
-          <div id="login-options">
-            <div id="google-btn" class="google-btn"></div>
-            <p id="login-error" class="error" role="alert"></p>
-            <div id="login-divider" class="divider"><span>hoặc</span></div>
-            <button type="button" class="btn" id="btn-guest">Dùng thử không cần đăng nhập</button>
-          </div>
-          <div id="continue-options" hidden>
-            <button type="button" class="btn primary" id="btn-continue">Vào ứng dụng</button>
-          </div>
-          <p class="fine">Dữ liệu được lưu trên trình duyệt của bạn.</p>
-        </div>
       </section>
 
       <div class="wrap">
@@ -232,7 +224,7 @@
       <section class="wrap closing">
         <h2>Thử ngay</h2>
         <p class="muted">Không cần cài đặt. Dùng thử ở chế độ khách hoặc đăng nhập bằng Google.</p>
-        <a class="btn primary" href="#start">Bắt đầu</a>
+        <button type="button" class="btn primary" id="closing-start">Bắt đầu sử dụng</button>
       </section>
 
       <footer class="wrap site-footer">
@@ -244,6 +236,20 @@
           <a href="https://github.com/trucquynh0709/kits/blob/main/docs/TEST_CASES.md" target="_blank" rel="noopener">Test case</a>
         </span>
       </footer>
+    </main>
+
+    <main id="auth-view" class="wrap auth" hidden>
+      <section class="auth-card" aria-labelledby="auth-title">
+        <span class="logo lg" aria-hidden="true"><i data-icon="check" data-size="26"></i></span>
+        <h1 id="auth-title">Đăng nhập</h1>
+        <p class="muted">Mỗi tài khoản có danh sách lịch hẹn riêng.</p>
+        <div id="google-btn" class="google-btn"></div>
+        <p id="login-error" class="error" role="alert"></p>
+        <div id="login-divider" class="divider"><span>hoặc</span></div>
+        <button type="button" class="btn" id="btn-guest">Dùng thử không cần đăng nhập</button>
+        <p class="fine">Chế độ khách lưu dữ liệu trên trình duyệt này. Đăng nhập Google để tách riêng lịch của bạn.</p>
+        <button type="button" class="link-btn back" id="auth-back">← Về trang chủ</button>
+      </section>
     </main>
 
     <main id="app-view" class="wrap layout" hidden>

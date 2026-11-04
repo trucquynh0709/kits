@@ -93,6 +93,7 @@ body {
 .btn:disabled { opacity: 0.45; cursor: not-allowed; }
 
 .link-btn { font: inherit; font-size: 0.86rem; color: var(--muted); background: none; border: none; padding: 0; cursor: pointer; }
+a.link-btn, a.btn { text-decoration: none; }
 .link-btn:hover { color: var(--text); text-decoration: underline; text-underline-offset: 3px; }
 .link-btn.accent { color: var(--accent); font-weight: 600; }
 .link-btn.accent:hover { color: var(--accent-hover); }
@@ -103,24 +104,30 @@ body {
 
 /* ---------- landing (trang chủ khi chưa đăng nhập) ---------- */
 .landing { padding-bottom: 24px; }
-.hero { display: grid; grid-template-columns: 1fr 360px; gap: 56px; align-items: center; padding-top: 64px; padding-bottom: 40px; }
-@media (max-width: 860px) { .hero { grid-template-columns: 1fr; gap: 28px; padding-top: 32px; } }
+.hero { padding-top: 72px; padding-bottom: 44px; max-width: 1080px; }
+.hero-text { max-width: 640px; }
+@media (max-width: 860px) { .hero { padding-top: 36px; } }
+.hero-cta { display: flex; gap: 10px; flex-wrap: wrap; margin-top: 28px; }
+.hero-cta .btn { padding: 11px 20px; }
 .hero h1 { font-size: clamp(2rem, 4.6vw, 3rem); font-weight: 700; line-height: 1.12; letter-spacing: -0.03em; margin: 0 0 16px; }
 .hero .lead { color: var(--muted); font-size: 1.05rem; max-width: 520px; margin: 0 0 20px; }
 .hero-points { list-style: none; margin: 0; padding: 0; display: grid; gap: 8px; font-size: 0.95rem; }
 .hero-points li { padding-left: 20px; position: relative; }
 .hero-points li::before { content: ''; position: absolute; left: 2px; top: 0.62em; width: 8px; height: 8px; border-radius: 2px; background: var(--accent); }
 
-.login-card { background: var(--card); border: 1px solid var(--line); border-radius: var(--radius); padding: 28px; text-align: center; scroll-margin-top: 24px; }
-.login-card h2 { font-size: 1.2rem; font-weight: 700; margin: 0 0 4px; }
-.google-btn { display: flex; justify-content: center; min-height: 44px; margin-top: 20px; }
+/* ---------- trang đăng nhập ---------- */
+.auth { display: flex; justify-content: center; padding-top: 9vh; padding-bottom: 48px; }
+.auth-card { width: 100%; max-width: 380px; text-align: center; background: var(--card); border: 1px solid var(--line); border-radius: var(--radius); padding: 36px 28px 24px; }
+.auth-card h1 { font-size: 1.4rem; font-weight: 700; margin: 0 0 4px; letter-spacing: -0.01em; }
+.logo.lg { width: 52px; height: 52px; border-radius: 13px; margin: 0 auto 16px; }
+.google-btn { display: flex; justify-content: center; min-height: 44px; margin-top: 24px; }
 .google-btn:empty { display: none; }
 .divider { display: flex; align-items: center; gap: 10px; color: var(--faint); font-size: 0.8rem; margin: 16px 0; }
 .divider::before, .divider::after { content: ''; flex: 1; border-top: 1px solid var(--line); }
-#btn-guest, #btn-continue { width: 100%; }
-#login-divider[hidden] + #btn-guest, #continue-options { margin-top: 20px; }
-#continue-options .btn { margin-top: 20px; }
-.fine { color: var(--faint); font-size: 0.78rem; margin: 14px 0 0; }
+#btn-guest { width: 100%; }
+#login-divider[hidden] + #btn-guest { margin-top: 24px; }
+.fine { color: var(--faint); font-size: 0.78rem; margin: 14px 0 0; line-height: 1.45; }
+.auth-card .back { margin-top: 20px; font-size: 0.84rem; }
 
 .hero-shot { margin: 0; }
 .hero-shot img { width: 100%; height: auto; display: block; border: 1px solid var(--line); border-radius: var(--radius); box-shadow: 0 20px 50px rgb(60 50 20 / 0.08); }
