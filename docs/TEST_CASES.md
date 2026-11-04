@@ -5,8 +5,8 @@ Có 3 lớp kiểm thử:
 | Lớp | Cách chạy | Kết quả |
 |---|---|---|
 | Unit test (`tests/scheduler.test.js`, `auth.test.js`, `calendar.test.js`) | `npm test` | **50/50 pass** |
-| E2E smoke test trên trình duyệt thật (tự động hoá phần lớn bảng A) | `npm start` rồi `node scripts/e2e-smoke.js` | **22/22 pass** |
-| Test thủ công (bảng dưới) | Theo các bước trong bảng | **25/28 pass**, 3 case chờ test với Google Client ID thật |
+| E2E smoke test trên trình duyệt thật (tự động hoá phần lớn bảng A) | `npm start` rồi `node scripts/e2e-smoke.js` | **26/26 pass** |
+| Test thủ công (bảng dưới) | Theo các bước trong bảng | **26/29 pass**, 3 case chờ test với Google Client ID thật |
 
 ## A. Test thủ công
 
@@ -50,6 +50,7 @@ Có 3 lớp kiểm thử:
 | TC-T26 | Bấm một ngày tương lai đã có lịch 09:00–10:00 → "Thêm lịch vào ngày này" | Popup mở, ngày điền sẵn, giờ gợi ý 10:00–10:30 | ✅ Pass |
 | TC-T27 | Bấm một ngày đã qua | Nút "Thêm lịch vào ngày này" bị tắt, ghi "Ngày đã qua" | ✅ Pass |
 | TC-T28 | Mở popup, nhấn Esc / bấm vùng tối bên ngoài | Popup đóng, không tạo lịch | ✅ Pass |
+| TC-T29 | Bấm badge "1 đã xong", rồi bấm lại | Lần 1: chỉ còn lịch đã xong, badge tô đậm; lần 2: hiện lại tất cả | ✅ Pass |
 
 ### A4. Đăng nhập
 

@@ -36,6 +36,8 @@ const filterCancelled = $('#filter-cancelled');
 let user = null;
 let appointments = [];
 let highlightIds = new Set();
+// Lọc theo trạng thái khi bấm badge thống kê: null | 'upcoming' | 'done' | 'cancelled'
+let statusFilter = null;
 
 // ---------- tiện ích hiển thị ----------
 function el(tag, props = {}, ...children) {
@@ -206,6 +208,7 @@ form.addEventListener('submit', (e) => {
 
   highlightIds = new Set();
   closeForm();
+  statusFilter = null;
   filterDate.value = result.appointment.start.slice(0, 10);
   persist(result.appointments);
   toast(`Đã lưu "${result.appointment.title}" lúc ${formatRange(result.appointment)}.`);
@@ -285,28 +288,36 @@ function render() {
   const done = appointments.filter((a) => a.status === STATUS.DONE).length;
   const cancelled = appointments.filter((a) => a.status === STATUS.CANCELLED).length;
   renderCalendar();
-  $('#list-sub').textContent = filterDate.value ? formatDay(filterDate.value) : 'Tất cả các ngày';
-  $('#btn-today').classList.toggle('on', filterDate.value === todayStr());
-  $('#btn-all').classList.toggle('on', !filterDate.value);
+  $('#list-sub').textContent = statusFilter
+    ? `${STATUS_FILTERS[statusFilter].title} · tất cả các ngày`
+    : filterDate.value
+      ? formatDay(filterDate.value)
+      : 'Tất cả các ngày';
+  $('#btn-today').classList.toggle('on', !statusFilter && filterDate.value === todayStr());
+  $('#btn-all').classList.toggle('on', !statusFilter && !filterDate.value);
+  filterCancelled.closest('label').hidden = !!statusFilter;
   $('#stats').replaceChildren(
-    el('span', { className: 'chip up', textContent: `${upcoming} sắp tới` }),
-    el('span', { className: 'chip ok', textContent: `${done} đã xong` }),
-    el('span', { className: 'chip no', textContent: `${cancelled} đã hủy` }),
+    statChip('upcoming', 'up', upcoming),
+    statChip('done', 'ok', done),
+    statChip('cancelled', 'no', cancelled),
   );
 
-  const visible = appointments.filter(
-    (a) =>
-      (filterCancelled.checked || a.status !== STATUS.CANCELLED) &&
-      (!filterDate.value || a.start.startsWith(filterDate.value)),
+  const visible = appointments.filter((a) =>
+    statusFilter
+      ? STATUS_FILTERS[statusFilter].match(a)
+      : (filterCancelled.checked || a.status !== STATUS.CANCELLED) &&
+        (!filterDate.value || a.start.startsWith(filterDate.value)),
   );
 
   const groups = groupByDate(visible);
   const today = todayStr();
   if (groups.length === 0) {
-    const msg = filterDate.value
-      ? `Không có lịch hẹn nào vào ${formatDay(filterDate.value)}.`
-      : 'Chưa có lịch hẹn nào. Hãy tạo lịch hẹn đầu tiên.';
-    const canAdd = !filterDate.value || filterDate.value >= today;
+    const msg = statusFilter
+      ? `Không có lịch hẹn nào ${STATUS_FILTERS[statusFilter].label}.`
+      : filterDate.value
+        ? `Không có lịch hẹn nào vào ${formatDay(filterDate.value)}.`
+        : 'Chưa có lịch hẹn nào. Hãy tạo lịch hẹn đầu tiên.';
+    const canAdd = !statusFilter && (!filterDate.value || filterDate.value >= today);
     const cta = canAdd
       ? el('button', { type: 'button', className: 'btn small add-day' }, icon('plus', { size: 15 }), 'Tạo lịch hẹn')
       : null;
@@ -332,6 +343,35 @@ function render() {
       ),
     ),
   );
+}
+
+const STATUS_FILTERS = {
+  upcoming: {
+    label: 'sắp tới',
+    title: 'Lịch sắp tới',
+    match: (a) => a.status === STATUS.SCHEDULED && toMs(a.end) > Date.now(),
+  },
+  done: { label: 'đã xong', title: 'Lịch đã xong', match: (a) => a.status === STATUS.DONE },
+  cancelled: { label: 'đã hủy', title: 'Lịch đã hủy', match: (a) => a.status === STATUS.CANCELLED },
+};
+
+// Badge thống kê là nút lọc: bấm để xem đúng các lịch được đếm, bấm lại để bỏ lọc.
+function statChip(key, tone, n) {
+  const active = statusFilter === key;
+  const b = el('button', {
+    type: 'button',
+    className: `chip ${tone}${active ? ' active' : ''}`,
+    textContent: `${n} ${STATUS_FILTERS[key].label}`,
+    title: active ? 'Bấm để bỏ lọc' : `Xem các lịch ${STATUS_FILTERS[key].label}`,
+  });
+  b.dataset.filter = key;
+  b.setAttribute('aria-pressed', String(active));
+  b.addEventListener('click', () => {
+    statusFilter = active ? null : key;
+    filterDate.value = '';
+    render();
+  });
+  return b;
 }
 
 // ---------- lịch tháng ----------
@@ -374,6 +414,7 @@ function renderCalendar() {
       btn.addEventListener('click', () => {
         const same = filterDate.value === c.date;
         filterDate.value = same ? '' : c.date;
+        statusFilter = null;
         render();
       });
       return btn;
@@ -415,10 +456,12 @@ $('#login-day').textContent = dayNum;
 
 filterCancelled.addEventListener('change', render);
 $('#btn-today').addEventListener('click', () => {
+  statusFilter = null;
   filterDate.value = todayStr();
   render();
 });
 $('#btn-all').addEventListener('click', () => {
+  statusFilter = null;
   filterDate.value = '';
   render();
 });
@@ -443,6 +486,7 @@ $('#btn-seed').addEventListener('click', () => {
       added++;
     }
   }
+  statusFilter = null;
   filterDate.value = day;
   persist(next);
   toast(added ? `Đã thêm ${added} lịch mẫu vào ngày mai.` : 'Lịch mẫu đã có sẵn (trùng giờ nên không thêm lại).');
@@ -455,6 +499,7 @@ function showApp(nextUser) {
   appointments = loadAppointments(user.id);
   highlightIds = new Set();
   closeForm();
+  statusFilter = null;
   filterDate.value = '';
 
   $('#user-name').textContent = user.guest ? 'Khách (chưa đăng nhập)' : user.name;

@@ -178,6 +178,22 @@ check(
   (await evaluate(`${titleSel('Ăn trưa với Lan')}.classList.contains('is-cancelled') && document.querySelector('#toast').classList.contains('error')`)),
 );
 
+// Badge thống kê là nút lọc
+const chipCheck = (key, cls) => `(() => {
+  const chip = document.querySelector('.chip[data-filter=${key}]');
+  chip.click();
+  const items = [...document.querySelectorAll('#list .item')];
+  const n = parseInt(document.querySelector('.chip[data-filter=${key}]').textContent, 10);
+  return document.querySelector('.chip[data-filter=${key}]').classList.contains('active') &&
+    items.length === n && items.every((i) => i.classList.contains('${cls}'));
+})()`;
+check('E2E-21 bấm badge "đã xong" → chỉ hiện lịch đã xong, đúng số lượng', await evaluate(chipCheck('done', 'is-done')));
+check('E2E-22 bấm badge "đã hủy" → chỉ hiện lịch đã hủy, đúng số lượng', await evaluate(chipCheck('cancelled', 'is-cancelled')));
+check('E2E-23 bấm badge "sắp tới" → chỉ hiện lịch chưa diễn ra', await evaluate(chipCheck('upcoming', 'is-scheduled')));
+await shot('06-chip-filter.png');
+await evaluate("document.querySelector('.chip[data-filter=upcoming]').click()");
+check('E2E-24 bấm lại badge đang chọn → bỏ lọc', await evaluate("!document.querySelector('.chip.active') && document.querySelector('#btn-all').classList.contains('on')"));
+
 const before = await evaluate("document.querySelectorAll('#list .item').length");
 await evaluate("document.querySelector('#btn-logout').click()");
 check('E2E-15 đăng xuất → về màn hình đăng nhập, ẩn dữ liệu', await evaluate("!document.querySelector('#login-view').hidden && document.querySelector('#app-view').hidden"));
