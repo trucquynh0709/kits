@@ -155,7 +155,13 @@ await shot('03-list.png');
 const stored = () => evaluate("JSON.parse(localStorage.getItem('lich-hen-mini.v1:guest')).length");
 const storedBefore = await stored();
 await evaluate('location.reload()');
-await sleep(800);
+// Chờ tới khi app đã render lại (trên bản deploy trang tải lâu hơn ở máy)
+for (let i = 0; i < 50; i++) {
+  await sleep(200);
+  try {
+    if (await evaluate("document.readyState === 'complete' && !document.querySelector('#app-view').hidden")) break;
+  } catch {}
+}
 await evaluate("document.querySelector('#btn-all').click()");
 check('E2E-9 reload trang → dữ liệu còn nguyên', (await stored()) === storedBefore && (await count()) > 0);
 
