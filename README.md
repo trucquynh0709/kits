@@ -4,7 +4,7 @@
 
 Website đặt và quản lý lịch hẹn cá nhân, **tự động chặn lịch trùng giờ và gợi ý khung giờ trống gần nhất**.
 
-- 🔗 **Bản chạy thực tế:** `<dán link Vercel/Netlify>`
+- 🔗 **Bản chạy thực tế:** https://kits-opal.vercel.app
 - 🎬 **Video demo (1–2 phút):** `<dán link video>`, kịch bản ở [docs/DEMO_SCRIPT.md](docs/DEMO_SCRIPT.md)
 - 💻 **Repository:** https://github.com/trucquynh0709/kits
 
@@ -28,7 +28,7 @@ Người dùng ghi lịch hẹn rải rác ở giấy note, tin nhắn, ứng d�
 | README + log công việc | ✅ | file này, [docs/DAILY_LOG.md](docs/DAILY_LOG.md) |
 | Demo chức năng chính | ✅ Ảnh chụp bên dưới + video | [docs/screenshots/](docs/screenshots/) |
 | Đăng nhập (khuyến nghị: social login) | ✅ **Đăng nhập Google**, mỗi tài khoản có dữ liệu riêng; có thêm chế độ khách | ảnh 00, [src/auth.js](src/auth.js) |
-| Deploy miễn phí | ⏳ Hướng dẫn ở mục 5 | link ở đầu trang |
+| Deploy miễn phí | ✅ Vercel, tự deploy mỗi lần push `main`; bộ e2e 37 case chạy pass trên bản thật | https://kits-opal.vercel.app |
 
 ## 3. Ảnh chụp màn hình
 

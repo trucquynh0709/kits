@@ -39,7 +39,7 @@ Một website đặt lịch hẹn cá nhân, chạy end-to-end, **không cho t�
 | 4.3 | Test thủ công theo TEST_CASES.md | N5 | 1h | Mọi case có kết quả Pass/Fail | ✅ |
 | **5** | **Triển khai & bàn giao** | | | | |
 | 5.1 | Đẩy GitHub + CI chạy test | N6 | 0.5h | GitHub Actions xanh | ✅ |
-| 5.2 | Deploy Vercel/Netlify + khai báo domain trong Google Console | N6 | 0.5h | Có link công khai trong README; đăng nhập Google chạy trên link đó | ☐ |
+| 5.2 | Deploy Vercel/Netlify + khai báo domain trong Google Console | N6 | 0.5h | Có link công khai trong README; đăng nhập Google chạy trên link đó | ✅ https://kits-opal.vercel.app |
 | 5.3 | Quay video demo 1–2 phút | N6 | 1h | Theo DEMO_SCRIPT.md, link trong README | ☐ |
 | 5.4 | README, daily log, tự đánh giá | N7 | 1.5h | Đủ các mục theo tiêu chí chấm | ✅ |
 | 5.5 | Buffer: sửa lỗi phát sinh, rà soát | N7 | 2h | — | ☐ |
