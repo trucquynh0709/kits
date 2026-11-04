@@ -12,6 +12,7 @@ import {
 import { loadAppointments, saveAppointments } from './storage.js';
 import { guestUser, loadSession, saveSession, renderGoogleButton, signOutGoogle } from './auth.js';
 import { GOOGLE_CLIENT_ID } from './config.js';
+import { monthGrid, countByDate } from './calendar.js';
 
 const $ = (sel) => document.querySelector(sel);
 const form = $('#appt-form');
@@ -235,6 +236,10 @@ function render() {
   const upcoming = scheduled.filter((a) => toMs(a.end) > Date.now()).length;
   const done = appointments.filter((a) => a.status === STATUS.DONE).length;
   const cancelled = appointments.filter((a) => a.status === STATUS.CANCELLED).length;
+  renderCalendar();
+  $('#list-sub').textContent = filterDate.value ? formatDay(filterDate.value) : 'Tất cả các ngày';
+  $('#btn-today').classList.toggle('on', filterDate.value === todayStr());
+  $('#btn-all').classList.toggle('on', !filterDate.value);
   $('#stats').replaceChildren(
     el('span', { className: 'chip up', textContent: `${upcoming} sắp tới` }),
     el('span', { className: 'chip ok', textContent: `${done} đã xong` }),
@@ -251,7 +256,7 @@ function render() {
   if (groups.length === 0) {
     const msg = filterDate.value
       ? `Không có lịch hẹn nào vào ${formatDay(filterDate.value)}.`
-      : 'Chưa có lịch hẹn nào. Hãy tạo lịch đầu tiên ở form bên cạnh.';
+      : 'Chưa có lịch hẹn nào. Hãy tạo lịch đầu tiên ở form bên trái.';
     listEl.replaceChildren(el('p', { className: 'empty', textContent: msg }));
     return;
   }
@@ -274,7 +279,67 @@ function render() {
   );
 }
 
-filterDate.addEventListener('change', render);
+// ---------- lịch tháng ----------
+const now0 = new Date();
+let calMonth = { y: now0.getFullYear(), m: now0.getMonth() };
+let lastFilter = '';
+
+function renderCalendar() {
+  // Khi bộ lọc ngày đổi (bấm Hôm nay, vừa lưu lịch…) thì lịch nhảy tới tháng của ngày đó.
+  if (filterDate.value && filterDate.value !== lastFilter) {
+    const [y, m] = filterDate.value.split('-').map(Number);
+    calMonth = { y, m: m - 1 };
+  }
+  lastFilter = filterDate.value;
+
+  $('#cal-label').textContent = `Tháng ${calMonth.m + 1}, ${calMonth.y}`;
+  const counts = countByDate(appointments);
+  const today = todayStr();
+  $('#cal-days').replaceChildren(
+    ...monthGrid(calMonth.y, calMonth.m).map((c) => {
+      const n = counts.get(c.date) ?? 0;
+      const cls = ['cal-day'];
+      if (!c.inMonth) cls.push('out');
+      else if (c.weekday === 7) cls.push('sun');
+      if (c.date === today) cls.push('today');
+      if (c.date === filterDate.value) cls.push('selected');
+      const btn = el(
+        'button',
+        {
+          type: 'button',
+          className: cls.join(' '),
+          textContent: String(c.day).padStart(2, '0'),
+          title: n ? `${n} lịch hẹn` : '',
+        },
+        n ? el('span', { className: 'dot' }) : null,
+      );
+      btn.dataset.date = c.date;
+      btn.setAttribute('aria-label', `${formatDay(c.date)}${n ? `, ${n} lịch hẹn` : ''}`);
+      btn.setAttribute('aria-pressed', String(c.date === filterDate.value));
+      btn.addEventListener('click', () => {
+        const same = filterDate.value === c.date;
+        filterDate.value = same ? '' : c.date;
+        // Chọn ngày chưa qua thì điền sẵn vào form để tạo lịch nhanh
+        if (!same && c.date >= today) fields.date.value = c.date;
+        render();
+      });
+      return btn;
+    }),
+  );
+}
+
+const shiftMonth = (delta) => {
+  const d = new Date(calMonth.y, calMonth.m + delta, 1);
+  calMonth = { y: d.getFullYear(), m: d.getMonth() };
+  renderCalendar();
+};
+$('#cal-prev').addEventListener('click', () => shiftMonth(-1));
+$('#cal-next').addEventListener('click', () => shiftMonth(1));
+
+const dayNum = String(now0.getDate()).padStart(2, '0');
+$('#logo-day').textContent = dayNum;
+$('#login-day').textContent = dayNum;
+
 filterCancelled.addEventListener('change', render);
 $('#btn-today').addEventListener('click', () => {
   filterDate.value = todayStr();

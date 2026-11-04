@@ -106,6 +106,16 @@ await evaluate("document.querySelector('#btn-seed').click()");
 await sleep(200);
 const afterSeed = await count();
 
+await evaluate("document.querySelector('#btn-all').click()");
+await evaluate("document.querySelector('.cal-day .dot').parentElement.click()");
+check(
+  'E2E-17 bấm ngày có chấm trên lịch tháng → ngày được chọn, danh sách lọc theo ngày đó',
+  await evaluate(`(() => {
+    const sel = document.querySelector('.cal-day.selected');
+    return !!sel && document.querySelector('#filter-date').value === sel.dataset.date && document.querySelectorAll('#list .item').length > 0;
+  })()`),
+);
+
 await evaluate("[...document.querySelectorAll('.item')][0].querySelector('.btn.done').click()");
 check('E2E-7 đánh dấu xong', (await evaluate("document.querySelectorAll('.item.is-done').length")) === 1);
 await evaluate("[...document.querySelectorAll('.item.is-scheduled')].at(-1).querySelector('.btn.danger').click()");

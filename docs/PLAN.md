@@ -24,11 +24,12 @@ Một website đặt lịch hẹn cá nhân, chạy end-to-end, **không cho t�
 | 3.2 | Danh sách nhóm theo ngày, lọc ngày, ẩn/hiện lịch hủy | N4 | 2h | Ngày và giờ sắp tăng dần; có nhãn "Hôm nay"; có thông báo khi danh sách rỗng | ✅ |
 | 3.3 | Nút Xong / Hủy / Khôi phục / Xóa | N4 | 1h | Thao tác xong, reload trang vẫn giữ nguyên trạng thái | ✅ |
 | 3.4 | Hộp cảnh báo trùng + nút dùng giờ gợi ý | N4 | 1h | Liệt kê lịch bị trùng, highlight trong danh sách, bấm gợi ý thì form tự điền giờ | ✅ |
-| 3.5 | Responsive + dark mode | N5 | 1h | Không cuộn ngang ở màn hình 390px | ✅ |
+| 3.5 | Responsive + giao diện (tông sáng be/cam) | N5 | 1h | Không cuộn ngang ở màn hình 390px | ✅ |
+| 3.7 | Lịch tháng kiểu date picker | N5 | 1.5h | Chấm đánh dấu ngày có hẹn; bấm ngày → lọc danh sách + điền ngày vào form; có unit test lưới tháng | ✅ |
 | 3.6 | Đăng nhập Google + chế độ khách *(thêm lại sau khi xem lại R1)* | N5 | 3h | Đăng nhập/đăng xuất được; mỗi tài khoản thấy dữ liệu riêng; token hết hạn/sai app bị từ chối; có unit test | ✅ (luồng Google chờ test với Client ID thật) |
 | **4** | **Kiểm thử** | | | | |
-| 4.1 | Unit test logic | N2–N3, N5 | (trong 2.x, 3.6) | `npm test` pass 45/45 | ✅ |
-| 4.2 | E2E smoke test trên trình duyệt | N5 | 1.5h | `node scripts/e2e-smoke.js` pass 17/17, tự chụp ảnh màn hình | ✅ |
+| 4.1 | Unit test logic | N2–N3, N5 | (trong 2.x, 3.6) | `npm test` pass 50/50 | ✅ |
+| 4.2 | E2E smoke test trên trình duyệt | N5 | 1.5h | `node scripts/e2e-smoke.js` pass 18/18, tự chụp ảnh màn hình | ✅ |
 | 4.3 | Test thủ công theo TEST_CASES.md | N5 | 1h | Mọi case có kết quả Pass/Fail | ✅ |
 | **5** | **Triển khai & bàn giao** | | | | |
 | 5.1 | Đẩy GitHub + CI chạy test | N6 | 0.5h | Badge/Actions xanh | ☐ |
@@ -48,4 +49,4 @@ Một website đặt lịch hẹn cá nhân, chạy end-to-end, **không cho t�
 
 ## Quy tắc cắt phạm vi
 
-Nếu một task trễ quá 50% ước lượng, cắt theo thứ tự ưu tiên thấp đến cao: dark mode → gợi ý giờ trống → lọc lịch hủy. **Không bao giờ cắt** kiểm tra trùng và test của nó.
+Nếu một task trễ quá 50% ước lượng, cắt theo thứ tự ưu tiên thấp đến cao: lịch tháng → gợi ý giờ trống → lọc lịch hủy. **Không bao giờ cắt** kiểm tra trùng và test của nó.

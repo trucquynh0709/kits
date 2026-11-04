@@ -29,7 +29,7 @@ Mỗi ngày gồm: **Hôm qua** đã làm gì · **Hôm nay** làm gì · **Vư�
 
 ### Ngày 5 — 08/11/2026
 - **Hôm qua:** Luồng chính chạy end-to-end.
-- **Hôm nay:** Responsive, dark mode, script e2e smoke test, chạy test thủ công. Xem lại R1 và thêm **đăng nhập Google** (GIS phía client), tách localStorage theo tài khoản, chế độ khách, 9 unit test mới.
+- **Hôm nay:** Responsive, làm lại giao diện tông sáng + lịch tháng, script e2e smoke test, chạy test thủ công. Xem lại R1 và thêm **đăng nhập Google** (GIS phía client), tách localStorage theo tài khoản, chế độ khách, 9 unit test mới.
 - **Vướng mắc:**
   - Ảnh chụp headless hiển thị ngày theo định dạng en-US vì locale của trình duyệt headless. Trình duyệt thật dùng locale của máy nên không phải lỗi.
   - Headless không đăng nhập Google được, nên e2e đi bằng chế độ khách; luồng Google để test thủ công (TC-T23 → T25).
