@@ -104,9 +104,46 @@ a.link-btn, a.btn { text-decoration: none; }
 
 /* ---------- landing (trang chủ khi chưa đăng nhập) ---------- */
 .landing { padding-bottom: 24px; }
-.hero { padding-top: 72px; padding-bottom: 44px; max-width: 1080px; }
-.hero-text { max-width: 640px; }
-@media (max-width: 860px) { .hero { padding-top: 36px; } }
+.hero { display: grid; grid-template-columns: 1.05fr 1fr; gap: 56px; align-items: center; padding-top: 64px; padding-bottom: 48px; }
+.hero-text { max-width: 560px; }
+@media (max-width: 900px) { .hero { grid-template-columns: 1fr; gap: 36px; padding-top: 36px; } }
+
+/* Minh hoạ ngày theo giờ ở hero */
+.hero-visual { position: relative; padding: 0 0 28px 0; }
+.dv-card { background: var(--card); border: 1px solid var(--line); border-radius: 16px; padding: 18px 18px 22px; box-shadow: 0 24px 60px rgb(60 50 20 / 0.10); }
+.dv-head { display: flex; justify-content: space-between; align-items: baseline; margin-bottom: 14px; }
+.dv-head strong { font-size: 0.98rem; font-weight: 600; }
+.dv-head span { font-size: 0.78rem; color: var(--faint); }
+.dv-grid { display: grid; grid-template-columns: 44px 1fr; gap: 10px; height: 360px; }
+.dv-hours { position: relative; }
+.dv-hours span { position: absolute; left: 0; font-size: 0.7rem; color: var(--faint); transform: translateY(-50%); font-variant-numeric: tabular-nums; }
+.dv-hours span:nth-child(1) { top: 0; }
+.dv-hours span:nth-child(2) { top: 25%; }
+.dv-hours span:nth-child(3) { top: 50%; }
+.dv-hours span:nth-child(4) { top: 75%; }
+.dv-hours span:nth-child(5) { top: 100%; }
+.dv-lane { position: relative; }
+.dv-line { position: absolute; left: 0; right: 0; border-top: 1px dashed var(--line); }
+.dv-ev { position: absolute; left: 0; right: 0; border-radius: 8px; padding: 4px 10px; margin: 1px 0; display: flex; flex-direction: column; justify-content: center; overflow: hidden; line-height: 1.25; }
+.dv-ev b { font-size: 0.8rem; font-weight: 600; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.dv-ev small { font-size: 0.7rem; color: var(--muted); white-space: nowrap; }
+.dv-busy { background: var(--accent-soft); box-shadow: inset 3px 0 0 var(--accent); right: 34%; }
+.dv-muted { opacity: 0.75; }
+.dv-new { left: 38%; background: rgb(255 255 255 / 0.92); border: 1.5px dashed var(--cancel); z-index: 2; box-shadow: 0 8px 20px rgb(194 65 45 / 0.12); }
+.dv-free { left: 38%; background: #f1f8f3; border: 1.5px dashed #7fbf98; z-index: 1; top: 50%; }
+.dv-free b { color: var(--done); }
+.dv-tag { position: absolute; right: 8px; top: 50%; transform: translateY(-50%); font-style: normal; font-size: 0.66rem; font-weight: 600; padding: 2px 7px; border-radius: 999px; }
+.dv-tag.bad { color: #fff; background: var(--cancel); }
+.dv-tag.good { color: var(--done); background: #fff; border: 1px solid #b9dcc6; }
+.dv-note { position: absolute; left: 24px; right: 24px; bottom: 0; display: flex; align-items: center; gap: 8px; padding: 10px 14px; background: var(--text); color: #fff; font-size: 0.78rem; border-radius: 10px; box-shadow: 0 12px 30px rgb(0 0 0 / 0.18); }
+.dv-dot { width: 8px; height: 8px; border-radius: 50%; background: #f08a7a; flex: none; }
+@media (max-width: 560px) {
+  .dv-grid { height: 320px; }
+  .dv-busy { right: 22%; }
+  .dv-new, .dv-free { left: 30%; }
+  .dv-tag { display: none; }
+  .dv-note { left: 12px; right: 12px; }
+}
 .hero-cta { display: flex; gap: 10px; flex-wrap: wrap; margin-top: 28px; }
 .hero-cta .btn { padding: 11px 20px; }
 .hero h1 { font-size: clamp(2rem, 4.6vw, 3rem); font-weight: 700; line-height: 1.12; letter-spacing: -0.03em; margin: 0 0 16px; }
