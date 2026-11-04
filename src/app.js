@@ -301,38 +301,21 @@ function statusActions(a, opts = {}) {
 }
 
 function itemState(a) {
-  if (a.status === STATUS.DONE) return ''; // vòng tròn xanh đã thể hiện
-  if (a.status === STATUS.CANCELLED) return 'Đã hủy';
-  if (toMs(a.end) <= Date.now()) return 'Đã qua';
-  return '';
+  if (a.status === STATUS.DONE) return el('span', { className: 'state done' }, icon('check', { size: 14 }), 'Đã xong');
+  if (a.status === STATUS.CANCELLED) return el('span', { className: 'state cancelled', textContent: 'Đã hủy' });
+  if (toMs(a.end) <= Date.now()) return el('span', { className: 'state', textContent: 'Đã qua' });
+  return el('span', { className: 'state' });
 }
 
-// Mỗi dòng chỉ gồm giờ, tiêu đề, trạng thái; bấm vào để mở chi tiết và thao tác.
-// Dòng lịch: vòng tròn đánh dấu xong | giờ + tiêu đề (bấm để xem chi tiết) | thùng rác.
-function renderItem(a) {
-  const done = a.status === STATUS.DONE;
-  const check =
-    a.status === STATUS.CANCELLED
-      ? el('span', { className: 'check-slot' })
-      : el(
-          'button',
-          {
-            type: 'button',
-            className: `check${done ? ' on' : ''}`,
-            title: done ? 'Bỏ đánh dấu xong' : 'Đánh dấu đã xong',
-          },
-          done ? icon('check', { size: 14 }) : null,
-        );
-  check.setAttribute?.('aria-label', done ? `Bỏ đánh dấu xong "${a.title}"` : `Đánh dấu xong "${a.title}"`);
-  if (check.tagName === 'BUTTON') {
-    check.setAttribute('aria-pressed', String(done));
-    check.addEventListener('click', () =>
-      done
-        ? updateStatus(a.id, STATUS.SCHEDULED, 'Đã bỏ đánh dấu xong.')
-        : updateStatus(a.id, STATUS.DONE, 'Đã đánh dấu hoàn thành.'),
-    );
-  }
+function quickButton(iconName, cls, label, onClick) {
+  const b = el('button', { type: 'button', className: `icon-btn quick ${cls}`, title: label }, icon(iconName, { size: 16 }));
+  b.setAttribute('aria-label', label);
+  b.addEventListener('click', onClick);
+  return b;
+}
 
+// Dòng lịch: giờ + tiêu đề + trạng thái (bấm để xem chi tiết) | nút nhanh hiện khi rê chuột.
+function renderItem(a) {
   const open = el(
     'button',
     { type: 'button', className: 'item-open', title: 'Xem chi tiết' },
@@ -343,20 +326,31 @@ function renderItem(a) {
       el('span', { className: 'title', textContent: a.title }),
       a.note ? el('span', { className: 'note', textContent: a.note }) : null,
     ),
-    el('span', { className: 'state', textContent: itemState(a) }),
+    itemState(a),
   );
   open.addEventListener('click', () => openDetail(a.id));
 
-  const trash = el('button', { type: 'button', className: 'icon-btn trash', title: 'Xóa' }, icon('trash', { size: 16 }));
-  trash.setAttribute('aria-label', `Xóa "${a.title}"`);
-  trash.addEventListener('click', () => confirmDelete(a));
+  const quick = el('div', { className: 'quick-actions' });
+  if (a.status === STATUS.SCHEDULED) {
+    quick.append(
+      quickButton('check', 'quick-done', `Đánh dấu đã xong "${a.title}"`, () =>
+        updateStatus(a.id, STATUS.DONE, 'Đã đánh dấu hoàn thành.'),
+      ),
+    );
+  } else if (a.status === STATUS.DONE) {
+    quick.append(
+      quickButton('rotate-ccw', 'quick-done', `Bỏ đánh dấu xong "${a.title}"`, () =>
+        updateStatus(a.id, STATUS.SCHEDULED, 'Đã bỏ đánh dấu xong.'),
+      ),
+    );
+  }
+  quick.append(quickButton('trash', 'trash', `Xóa "${a.title}"`, () => confirmDelete(a)));
 
   return el(
     'div',
     { className: `item is-${a.status}${highlightIds.has(a.id) ? ' highlight' : ''}` },
-    check,
     open,
-    trash,
+    quick,
   );
 }
 

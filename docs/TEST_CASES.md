@@ -53,7 +53,7 @@ Có 3 lớp kiểm thử:
 | TC-T29 | Bấm tab "Đã xong", rồi tab "Tất cả" | Tab "Đã xong": chỉ còn lịch đã xong, đúng số ghi trên tab; "Tất cả": bỏ lọc | ✅ Pass |
 | TC-T30 | Có lịch đã xong ở 3 ngày khác nhau (hôm qua, 3 ngày trước, 6 ngày trước), bấm tab "Đã xong" | Nhóm theo từng ngày, **hôm qua lên đầu**, mỗi nhóm có nhãn "Hôm qua"/"3 ngày trước" | ✅ Pass |
 | TC-T31 | Bấm vào một lịch đã hủy mà khung giờ đã bị lịch khác chiếm → bấm "Khôi phục" trong popup | Popup vẫn mở, hiện hộp cảnh báo nêu lịch đang chiếm giờ; trạng thái vẫn là "Đã hủy" | ✅ Pass |
-| TC-T32 | Bấm vòng tròn bên trái một lịch sắp tới, rồi bấm lại | Lần 1: vòng tròn xanh có dấu tích, số ở tab "Đã xong" tăng; lần 2: về như cũ | ✅ Pass |
+| TC-T32 | Rê chuột vào một lịch sắp tới → bấm nút ✓, rồi bấm nút ↺ trên cùng dòng | Lần 1: dòng hiện "✓ Đã xong" màu xanh, số ở tab "Đã xong" tăng; lần 2: về như cũ | ✅ Pass |
 | TC-T33 | Rê chuột vào một dòng → bấm thùng rác → "Không", rồi làm lại → "Xóa" | Hiện popup "Xóa lịch hẹn?" của app (không phải hộp "localhost says"); "Không" giữ nguyên, "Xóa" xóa đúng lịch đó | ✅ Pass |
 
 ### A4. Đăng nhập

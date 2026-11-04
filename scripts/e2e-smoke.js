@@ -245,13 +245,14 @@ await evaluate("document.querySelector('#detail-close').click()");
 check('E2E-28 đóng popup chi tiết', await evaluate("!document.querySelector('#detail-dialog').open"));
 
 // Thao tác nhanh trên dòng: vòng tròn đánh dấu xong + thùng rác với popup xác nhận riêng
-await evaluate("document.querySelector('.item.is-scheduled .check').click()");
-check('E2E-29 bấm vòng tròn trên dòng → đánh dấu xong ngay, không cần mở chi tiết', await evaluate(
-  "!document.querySelector('#detail-dialog').open && document.querySelectorAll('.item.is-done .check.on').length >= 1",
-));
-const doneBefore = await evaluate("document.querySelectorAll('.item.is-done').length");
-await evaluate("document.querySelector('.item.is-done .check').click()");
-check('E2E-30 bấm lại vòng tròn → bỏ đánh dấu', (await evaluate("document.querySelectorAll('.item.is-done').length")) === doneBefore - 1);
+const doneCount = () => evaluate("document.querySelectorAll('.item.is-done').length");
+const done0 = await doneCount();
+await evaluate("document.querySelector('.item.is-scheduled .quick-done').click()");
+check('E2E-29 nút nhanh ✓ trên dòng → đánh dấu xong ngay, không cần mở chi tiết, dòng hiện "Đã xong"', await evaluate(
+  "!document.querySelector('#detail-dialog').open && [...document.querySelectorAll('.item.is-done .state')].every((s) => s.textContent.includes('Đã xong'))",
+) && (await doneCount()) === done0 + 1);
+await evaluate("document.querySelector('.item.is-done .quick-done').click()");
+check('E2E-30 nút nhanh ↺ trên dòng đã xong → bỏ đánh dấu', (await doneCount()) === done0);
 
 const rows = () => evaluate("document.querySelectorAll('#list .item').length");
 const rowsBefore = await rows();
