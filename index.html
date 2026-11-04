@@ -1,0 +1,92 @@
+<!doctype html>
+<html lang="vi">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Lịch Hẹn Mini</title>
+    <meta name="description" content="Đặt và quản lý lịch hẹn cá nhân, tự động phát hiện trùng giờ." />
+    <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>📅</text></svg>" />
+    <link rel="stylesheet" href="css/style.css" />
+  </head>
+  <body>
+    <header class="topbar">
+      <div class="wrap">
+        <h1>📅 Lịch Hẹn Mini</h1>
+        <p class="tagline">Đặt lịch nhanh, không lo trùng giờ.</p>
+      </div>
+    </header>
+
+    <main class="wrap layout">
+      <section class="card" aria-labelledby="form-heading">
+        <h2 id="form-heading">Tạo lịch hẹn</h2>
+        <form id="appt-form" novalidate>
+          <label class="field">
+            <span>Tiêu đề <b aria-hidden="true">*</b></span>
+            <input id="f-title" name="title" type="text" maxlength="120" placeholder="VD: Khám răng định kỳ" autocomplete="off" />
+            <small class="error" data-for="title"></small>
+          </label>
+
+          <label class="field">
+            <span>Ngày <b aria-hidden="true">*</b></span>
+            <input id="f-date" name="date" type="date" />
+          </label>
+
+          <div class="row">
+            <label class="field">
+              <span>Bắt đầu <b aria-hidden="true">*</b></span>
+              <input id="f-start" name="start" type="time" step="300" />
+            </label>
+            <label class="field">
+              <span>Kết thúc <b aria-hidden="true">*</b></span>
+              <input id="f-end" name="end" type="time" step="300" />
+            </label>
+          </div>
+          <small class="error" data-for="start"></small>
+          <small class="error" data-for="end"></small>
+
+          <label class="field">
+            <span>Ghi chú</span>
+            <textarea id="f-note" name="note" rows="3" maxlength="520" placeholder="Địa điểm, người liên hệ…"></textarea>
+            <small class="hint"><span id="note-count">0</span>/500</small>
+            <small class="error" data-for="note"></small>
+          </label>
+
+          <div id="conflict-box" class="conflict" role="alert" hidden></div>
+
+          <button type="submit" class="btn primary">Lưu lịch hẹn</button>
+        </form>
+      </section>
+
+      <section class="card" aria-labelledby="list-heading">
+        <div class="list-head">
+          <h2 id="list-heading">Danh sách lịch hẹn</h2>
+          <p id="stats" class="stats"></p>
+        </div>
+
+        <div class="filters">
+          <label class="inline">
+            <span>Xem ngày</span>
+            <input id="filter-date" type="date" />
+          </label>
+          <button type="button" class="btn ghost" id="btn-today">Hôm nay</button>
+          <button type="button" class="btn ghost" id="btn-all">Tất cả</button>
+          <label class="inline check">
+            <input id="filter-cancelled" type="checkbox" checked />
+            <span>Hiện lịch đã hủy</span>
+          </label>
+        </div>
+
+        <div id="list" aria-live="polite"></div>
+        <button type="button" class="btn link" id="btn-seed">Nạp dữ liệu mẫu để thử</button>
+      </section>
+    </main>
+
+    <div id="toast" class="toast" role="status" hidden></div>
+
+    <footer class="wrap footer">
+      Dữ liệu lưu trên trình duyệt này (localStorage) · Dự án mini 1 tuần
+    </footer>
+
+    <script type="module" src="src/app.js"></script>
+  </body>
+</html>
