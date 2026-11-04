@@ -113,6 +113,40 @@ await sleep(800);
 await evaluate("document.querySelector('#btn-all').click()");
 check('E2E-9 reload trang → dữ liệu còn nguyên', (await count()) === afterSeed);
 
+const errorOf = (field) => evaluate(`document.querySelector('[data-for=${field}]').textContent`);
+await evaluate(fill('Ngược giờ', '16:00', '15:00'));
+check('E2E-10 giờ kết thúc trước giờ bắt đầu → lỗi', (await errorOf('end')) !== '');
+
+await evaluate(`(() => {
+  const d = new Date(); d.setDate(d.getDate() - 1);
+  document.querySelector('#f-title').value = 'Hôm qua';
+  document.querySelector('#f-date').value = d.toLocaleDateString('sv-SE');
+  document.querySelector('#f-start').value = '09:00'; document.querySelector('#f-end').value = '10:00';
+  document.querySelector('#appt-form button[type=submit]').click();
+})()`);
+check('E2E-11 đặt lịch quá khứ → lỗi', (await errorOf('start')).includes('quá khứ'));
+
+const xss = '<img src=x onerror="window.pwned=1">';
+await evaluate(fill(xss, '18:00', '18:30'));
+check(
+  'E2E-12 tiêu đề chứa HTML được hiển thị nguyên văn, không chạy',
+  (await evaluate(`[...document.querySelectorAll('.item .title')].some((t) => t.textContent.includes(${JSON.stringify(xss)})) && !window.pwned && !document.querySelector('.item img')`)),
+);
+
+await evaluate("document.querySelector('#filter-cancelled').click()");
+check('E2E-13 bỏ tick "Hiện lịch đã hủy" → ẩn lịch hủy', (await evaluate("document.querySelectorAll('.item.is-cancelled').length")) === 0);
+await evaluate("document.querySelector('#filter-cancelled').click()");
+
+// Hủy lịch 12:00, đặt lịch khác vào đúng giờ đó, rồi khôi phục lịch cũ → phải bị chặn
+const titleSel = (t) => `[...document.querySelectorAll('.item')].find((i) => i.querySelector('.title').textContent.startsWith(${JSON.stringify(t)}))`;
+await evaluate(`${titleSel('Ăn trưa với Lan')}.querySelector('.btn.danger').click()`);
+await evaluate(fill('Lịch chen vào', '12:00', '12:30'));
+await evaluate(`${titleSel('Ăn trưa với Lan')}.querySelector('.actions .btn').click()`);
+check(
+  'E2E-14 khôi phục lịch hủy khi giờ đã bị chiếm → bị chặn',
+  (await evaluate(`${titleSel('Ăn trưa với Lan')}.classList.contains('is-cancelled') && document.querySelector('#toast').classList.contains('error')`)),
+);
+
 // Màn hình điện thoại
 await send('Emulation.setDeviceMetricsOverride', { width: 390, height: 1200, deviceScaleFactor: 1, mobile: true });
 await sleep(300);
