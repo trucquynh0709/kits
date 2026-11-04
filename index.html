@@ -5,108 +5,85 @@
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <title>Lịch Hẹn Mini</title>
     <meta name="description" content="Đặt và quản lý lịch hẹn cá nhân, tự động phát hiện trùng giờ." />
-    <meta name="theme-color" content="#ece5cc" />
+    <meta name="theme-color" content="#f6f4ee" />
     <meta name="color-scheme" content="light" />
-    <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'><rect x='3' y='6' width='26' height='23' rx='5' fill='%23f6a623'/><rect x='3' y='6' width='26' height='10' rx='5' fill='%23ee8a12'/><rect x='9' y='2' width='3' height='7' rx='1.5' fill='%23e5533c'/><rect x='20' y='2' width='3' height='7' rx='1.5' fill='%23e5533c'/><path d='M11 21.5l3.5 3.5 6.5-6.5' fill='none' stroke='white' stroke-width='2.6' stroke-linecap='round' stroke-linejoin='round'/></svg>" />
+    <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'><rect x='3' y='5' width='26' height='24' rx='6' fill='%23ee8a12'/><path d='M3 12h26' stroke='white' stroke-width='2'/><path d='M11 21l3.5 3.5 6.5-6.5' fill='none' stroke='white' stroke-width='2.6' stroke-linecap='round' stroke-linejoin='round'/></svg>" />
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro:wght@400;500;600;700;800&display=swap" />
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro:wght@400;500;600;700&display=swap" />
     <link rel="stylesheet" href="css/style.css" />
   </head>
   <body>
     <header class="topbar">
       <div class="wrap topbar-inner">
-        <a class="brand" href="./" aria-label="Lịch Hẹn Mini">
+        <a class="brand" href="./">
           <span class="logo" aria-hidden="true"><span id="logo-day">01</span></span>
-          <span class="brand-text">
-            <strong>Lịch Hẹn Mini</strong>
-            <small>Đặt lịch nhanh, không lo trùng giờ</small>
-          </span>
+          <strong>Lịch Hẹn Mini</strong>
         </a>
         <div class="top-actions">
-        <button type="button" class="btn cta" id="btn-new" hidden><i data-icon="plus"></i>Tạo lịch hẹn</button>
-        <div id="user-chip" class="user-chip" hidden>
-          <img id="user-avatar" alt="" referrerpolicy="no-referrer" hidden />
-          <span id="user-initial" class="avatar-fallback" aria-hidden="true"></span>
-          <span id="user-name"></span>
-          <button type="button" class="btn small ghost" id="btn-logout" aria-label="Đăng xuất"><i data-icon="log-out" data-size="15"></i><span class="label">Đăng xuất</span></button>
-        </div>
+          <button type="button" class="btn primary cta" id="btn-new" hidden><i data-icon="plus" data-size="16"></i>Tạo lịch hẹn</button>
+          <div id="user-chip" class="user-chip" hidden>
+            <img id="user-avatar" alt="" referrerpolicy="no-referrer" hidden />
+            <span id="user-initial" class="avatar-fallback" aria-hidden="true"></span>
+            <span id="user-name"></span>
+            <button type="button" class="link-btn" id="btn-logout">Đăng xuất</button>
+          </div>
         </div>
       </div>
     </header>
 
     <main id="login-view" class="wrap login" hidden>
-      <section class="hero">
-        <span class="eyebrow">Quản lý lịch hẹn cá nhân</span>
-        <h1>Không bao giờ hẹn <span class="accent">hai việc</span> cùng một giờ.</h1>
-        <p class="lead">Ghi lịch hẹn trong vài giây. App tự phát hiện trùng giờ và gợi ý ngay khung giờ trống gần nhất.</p>
-        <ul class="features">
-          <li><span class="fi"><i data-icon="ban" data-size="20"></i></span><div><b>Chặn trùng giờ</b><small>Kể cả chồng một phần hay qua nửa đêm</small></div></li>
-          <li><span class="fi"><i data-icon="lightbulb" data-size="20"></i></span><div><b>Gợi ý giờ trống</b><small>Bấm một lần là form tự điền</small></div></li>
-          <li><span class="fi"><i data-icon="calendar-days" data-size="20"></i></span><div><b>Lịch tháng trực quan</b><small>Ngày có hẹn được đánh dấu</small></div></li>
-        </ul>
-      </section>
-
-      <section class="card login-card">
-        <div class="login-badge" aria-hidden="true"><span id="login-day">01</span></div>
-        <h2>Bắt đầu</h2>
-        <p class="muted">Mỗi tài khoản có danh sách lịch hẹn riêng.</p>
+      <section class="login-card">
+        <span class="logo lg" aria-hidden="true"><span id="login-day">01</span></span>
+        <h1>Lịch Hẹn Mini</h1>
+        <p class="muted">Đặt lịch hẹn cá nhân, tự động phát hiện trùng giờ.</p>
         <div id="google-btn" class="google-btn"></div>
         <p id="login-error" class="error" role="alert"></p>
         <div id="login-divider" class="divider"><span>hoặc</span></div>
-        <button type="button" class="btn primary" id="btn-guest">Dùng thử ngay<i data-icon="arrow-right"></i></button>
-        <p class="muted small">Không cần đăng nhập · Dữ liệu lưu trên trình duyệt của bạn</p>
+        <button type="button" class="btn" id="btn-guest">Dùng thử không cần đăng nhập</button>
+        <p class="fine">Dữ liệu được lưu trên trình duyệt của bạn.</p>
       </section>
     </main>
 
     <main id="app-view" class="wrap layout" hidden>
-      <div class="side">
-        <section class="card cal-card" aria-labelledby="cal-heading">
-          <div class="cal-head">
-            <h2 id="cal-heading">Chọn ngày</h2>
-            <div class="cal-nav">
-              <button type="button" class="icon-btn" id="cal-prev" aria-label="Tháng trước"><i data-icon="chevron-left"></i></button>
-              <span id="cal-label" class="cal-label"></span>
-              <button type="button" class="icon-btn" id="cal-next" aria-label="Tháng sau"><i data-icon="chevron-right"></i></button>
-            </div>
+      <aside class="panel cal-card" aria-labelledby="cal-label">
+        <div class="cal-head">
+          <h2 id="cal-label" class="cal-label"></h2>
+          <div class="cal-nav">
+            <button type="button" class="icon-btn" id="cal-prev" aria-label="Tháng trước"><i data-icon="chevron-left"></i></button>
+            <button type="button" class="icon-btn" id="cal-next" aria-label="Tháng sau"><i data-icon="chevron-right"></i></button>
           </div>
-          <div class="cal-grid cal-weekdays" aria-hidden="true">
-            <span>T2</span><span>T3</span><span>T4</span><span>T5</span><span>T6</span><span>T7</span><span class="sun">CN</span>
-          </div>
-          <div id="cal-days" class="cal-grid cal-days"></div>
-          <div id="day-panel" class="day-panel">
-            <div class="day-info">
-              <strong id="day-title"></strong>
-              <small id="day-meta"></small>
-            </div>
-            <button type="button" class="btn small add-day" id="btn-add-day"><i data-icon="plus" data-size="15"></i>Thêm lịch vào ngày này</button>
-          </div>
-        </section>
-      </div>
-
-      <section class="card list-card" aria-labelledby="list-heading">
-        <div class="list-head">
-          <div>
-            <h2 id="list-heading">Lịch hẹn</h2>
-            <p id="list-sub" class="muted"></p>
-          </div>
-          <div id="stats" class="stats"></div>
         </div>
-
-        <div class="filters">
-          <div class="seg">
-            <button type="button" class="btn ghost" id="btn-today">Hôm nay</button>
-            <button type="button" class="btn ghost" id="btn-all">Tất cả</button>
-          </div>
-          <label class="inline check">
-            <input id="filter-cancelled" type="checkbox" checked />
-            <span>Hiện lịch đã hủy</span>
-          </label>
-          <input id="filter-date" type="hidden" />
+        <div class="cal-grid cal-weekdays" aria-hidden="true">
+          <span>T2</span><span>T3</span><span>T4</span><span>T5</span><span>T6</span><span>T7</span><span>CN</span>
         </div>
+        <div id="cal-days" class="cal-grid cal-days"></div>
+        <div id="day-panel" class="day-panel">
+          <div class="day-info">
+            <strong id="day-title"></strong>
+            <small id="day-meta"></small>
+          </div>
+          <button type="button" class="link-btn accent" id="btn-add-day">+ Thêm lịch</button>
+        </div>
+      </aside>
+
+      <section class="panel list-card" aria-labelledby="list-heading">
+        <h2 id="list-heading" class="sr-only">Lịch hẹn</h2>
+        <nav class="tabs" aria-label="Lọc lịch hẹn">
+          <button type="button" class="tab" id="btn-all">Tất cả</button>
+          <button type="button" class="tab" id="btn-today">Hôm nay</button>
+          <button type="button" class="tab" data-filter="upcoming">Sắp tới <span class="n"></span></button>
+          <button type="button" class="tab" data-filter="done">Đã xong <span class="n"></span></button>
+          <button type="button" class="tab" data-filter="cancelled">Đã hủy <span class="n"></span></button>
+        </nav>
+        <div id="list-context" class="list-context" hidden>
+          <span id="list-sub"></span>
+          <button type="button" class="link-btn" id="btn-clear-day">Bỏ chọn ngày</button>
+        </div>
+        <input id="filter-date" type="hidden" />
 
         <div id="list" aria-live="polite"></div>
-        <button type="button" class="btn link" id="btn-seed"><i data-icon="plus" data-size="15"></i>Nạp dữ liệu mẫu để thử</button>
+        <button type="button" class="link-btn seed" id="btn-seed">Nạp dữ liệu mẫu để thử</button>
       </section>
     </main>
 
@@ -120,23 +97,23 @@
       </div>
       <form id="appt-form" novalidate>
         <label class="field">
-          <span>Tiêu đề <b aria-hidden="true">*</b></span>
+          <span>Tiêu đề</span>
           <input id="f-title" name="title" type="text" maxlength="120" placeholder="VD: Khám răng định kỳ" autocomplete="off" />
           <small class="error" data-for="title"></small>
         </label>
 
         <label class="field">
-          <span>Ngày <b aria-hidden="true">*</b></span>
+          <span>Ngày</span>
           <input id="f-date" name="date" type="date" />
         </label>
 
         <div class="row">
           <label class="field">
-            <span>Bắt đầu <b aria-hidden="true">*</b></span>
+            <span>Bắt đầu</span>
             <input id="f-start" name="start" type="time" step="300" />
           </label>
           <label class="field">
-            <span>Kết thúc <b aria-hidden="true">*</b></span>
+            <span>Kết thúc</span>
             <input id="f-end" name="end" type="time" step="300" />
           </label>
         </div>
@@ -144,7 +121,7 @@
         <small class="error" data-for="end"></small>
 
         <label class="field">
-          <span>Ghi chú</span>
+          <span>Ghi chú <em>(không bắt buộc)</em></span>
           <textarea id="f-note" name="note" rows="2" maxlength="520" placeholder="Địa điểm, người liên hệ…"></textarea>
           <small class="hint"><span id="note-count">0</span>/500</small>
           <small class="error" data-for="note"></small>
@@ -153,15 +130,15 @@
         <div id="conflict-box" class="conflict" role="alert" hidden></div>
 
         <div class="modal-actions">
-          <button type="button" class="btn ghost" id="btn-cancel">Hủy</button>
-          <button type="submit" class="btn primary"><i data-icon="calendar-plus"></i>Lưu lịch hẹn</button>
+          <button type="button" class="btn" id="btn-cancel">Hủy</button>
+          <button type="submit" class="btn primary">Lưu lịch hẹn</button>
         </div>
       </form>
     </dialog>
 
     <dialog id="detail-dialog" class="modal detail" aria-labelledby="detail-title">
       <div class="modal-head">
-        <span id="detail-status" class="status-pill"></span>
+        <span id="detail-status" class="status"></span>
         <button type="button" class="icon-btn" id="detail-close" aria-label="Đóng"><i data-icon="x"></i></button>
       </div>
       <h2 id="detail-title" class="detail-title" tabindex="-1" autofocus></h2>
@@ -171,10 +148,6 @@
     </dialog>
 
     <div id="toast" class="toast" role="status" hidden></div>
-
-    <footer class="wrap footer">
-      Dữ liệu lưu trên trình duyệt này (localStorage) · Dự án mini 1 tuần
-    </footer>
 
     <script type="module" src="src/app.js"></script>
   </body>

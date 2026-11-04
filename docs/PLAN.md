@@ -32,6 +32,7 @@ Một website đặt lịch hẹn cá nhân, chạy end-to-end, **không cho t�
 | 3.9 | Badge thống kê bấm được để lọc theo trạng thái | N5 | 0.5h | Bấm badge → danh sách chỉ còn đúng các lịch được đếm; bấm lại → bỏ lọc | ✅ |
 | 3.10 | Danh sách nhiều ngày: nhãn ngày tương đối + số lịch, lịch sử mới nhất trước, bấm tiêu đề ngày để chọn ngày | N5 | 1h | Lọc "đã xong" trên 3 ngày khác nhau hiện đúng thứ tự mới → cũ; có unit test | ✅ |
 | 3.11 | Popup chi tiết lịch hẹn | N5 | 1h | Bấm vào lịch → thấy đủ ngày/giờ/thời lượng/ghi chú/trạng thái; đổi trạng thái ngay trong popup, lỗi khôi phục hiện trong popup | ✅ |
+| 3.12 | Tinh gọn giao diện (phản hồi "rối mắt, trông như AI") | N5 | 2h | Bỏ trang kiểu landing, bỏ nút trên từng dòng (thao tác dồn vào popup), gộp lọc thành 1 hàng tab, chỉ 1 màu nhấn | ✅ |
 | 4.1 | Unit test logic | N2–N3, N5 | (trong 2.x, 3.6) | `npm test` pass 52/52 | ✅ |
 | 4.2 | E2E smoke test trên trình duyệt | N5 | 1.5h | `node scripts/e2e-smoke.js` pass 30/30, tự chụp ảnh màn hình | ✅ |
 | 4.3 | Test thủ công theo TEST_CASES.md | N5 | 1h | Mọi case có kết quả Pass/Fail | ✅ |

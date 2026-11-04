@@ -17,15 +17,15 @@ Có 3 lớp kiểm thử:
 
 | ID | Bước thực hiện | Kết quả mong đợi | Kết quả |
 |---|---|---|---|
-| TC-T01 | Tạo lịch 09:00–10:00 cùng ngày với A | Bị chặn; dưới ô giờ hiện "Khung giờ này trùng với lịch hẹn khác"; hộp vàng liệt kê A; A được viền vàng trong danh sách | ✅ Pass |
+| TC-T01 | Tạo lịch 09:00–10:00 cùng ngày với A | Bị chặn; dưới ô giờ hiện "Khung giờ này trùng với lịch hẹn khác"; hộp vàng liệt kê A; dòng A được tô vàng trong danh sách | ✅ Pass |
 | TC-T02 | Tạo lịch 08:30–09:30 (chồng đầu) | Bị chặn như T01 | ✅ Pass |
 | TC-T03 | Tạo lịch 09:45–10:30 (chồng cuối) | Bị chặn | ✅ Pass |
 | TC-T04 | Tạo lịch 09:15–09:45 (nằm trong A) | Bị chặn | ✅ Pass |
 | TC-T05 | Tạo lịch 08:00–11:00 (bao trùm A) | Bị chặn | ✅ Pass |
 | TC-T06 | Tạo lịch 10:00–11:00 (nối tiếp ngay sau A) | **Lưu thành công** | ✅ Pass |
 | TC-T07 | Tạo lịch 09:00–10:00 vào **ngày kia** | Lưu thành công | ✅ Pass |
-| TC-T08 | Hủy A, rồi tạo lịch 09:00–10:00 | Lưu thành công (lịch hủy không chiếm giờ) | ✅ Pass |
-| TC-T09 | Tiếp T08: bấm **Khôi phục** lịch A | Bị chặn; toast đỏ "Không thể khôi phục: khung giờ đã bị lịch khác chiếm" và nêu lịch đang chiếm | ✅ Pass |
+| TC-T08 | Mở A → bấm "Hủy" trong popup, rồi tạo lịch 09:00–10:00 | Lưu thành công (lịch hủy không chiếm giờ) | ✅ Pass |
+| TC-T09 | Tiếp T08: vào tab "Đã hủy" → mở A → bấm **Khôi phục** | Bị chặn; trong popup hiện cảnh báo "Không thể khôi phục: khung giờ đã bị lịch khác chiếm" kèm lịch đang chiếm; A vẫn "Đã hủy" | ✅ Pass |
 | TC-T10 | Tạo lịch 09:30–10:15 (trùng A), bấm "Dùng giờ trống gần nhất" | Form tự điền 10:00–10:45; bấm Lưu thì thành công | ✅ Pass |
 
 ### A2. Validation
@@ -43,15 +43,15 @@ Có 3 lớp kiểm thử:
 
 | ID | Bước thực hiện | Kết quả mong đợi | Kết quả |
 |---|---|---|---|
-| TC-T17 | Bấm "Nạp dữ liệu mẫu", rồi "Tất cả" | Các lịch nhóm theo ngày, ngày và giờ tăng dần; ngày hôm nay có nhãn "Hôm nay" | ✅ Pass |
-| TC-T18 | Bấm "✓ Xong" trên một lịch | Tiêu đề gạch ngang, có nhãn "Đã xong"; thống kê cập nhật | ✅ Pass |
-| TC-T19 | Bỏ tick "Hiện lịch đã hủy" | Lịch hủy biến mất khỏi danh sách; tick lại thì hiện lại | ✅ Pass |
+| TC-T17 | Bấm "Nạp dữ liệu mẫu", rồi tab "Tất cả" | Các lịch nhóm theo ngày, ngày và giờ tăng dần; mỗi nhóm có nhãn "Hôm nay"/"Ngày mai"/… | ✅ Pass |
+| TC-T18 | Bấm vào một lịch → "Xong" trong popup | Popup đổi trạng thái thành "Đã xong"; dòng trong danh sách hiện chữ "Đã xong" màu xanh; số ở tab "Đã xong" tăng | ✅ Pass |
+| TC-T19 | Hủy một lịch, xem tab "Tất cả" rồi tab "Đã hủy" | Lịch hủy không nằm trong "Tất cả" / xem theo ngày; chỉ hiện ở tab "Đã hủy" | ✅ Pass |
 | TC-T20 | Tạo/hủy vài lịch rồi F5 | Dữ liệu và trạng thái giữ nguyên | ✅ Pass |
-| TC-T26 | Bấm một ngày tương lai đã có lịch 09:00–10:00 → "Thêm lịch vào ngày này" | Popup mở, ngày điền sẵn, giờ gợi ý 10:00–10:30 | ✅ Pass |
+| TC-T26 | Bấm một ngày tương lai đã có lịch 09:00–10:00 → "+ Thêm lịch" dưới lịch tháng | Popup mở, ngày điền sẵn, giờ gợi ý 10:00–10:30 | ✅ Pass |
 | TC-T27 | Bấm một ngày đã qua | Nút "Thêm lịch vào ngày này" bị tắt, ghi "Ngày đã qua" | ✅ Pass |
 | TC-T28 | Mở popup, nhấn Esc / bấm vùng tối bên ngoài | Popup đóng, không tạo lịch | ✅ Pass |
-| TC-T29 | Bấm badge "1 đã xong", rồi bấm lại | Lần 1: chỉ còn lịch đã xong, badge tô đậm; lần 2: hiện lại tất cả | ✅ Pass |
-| TC-T30 | Có lịch đã xong ở 3 ngày khác nhau (hôm qua, 3 ngày trước, 6 ngày trước), bấm badge "đã xong" | Nhóm theo từng ngày, **hôm qua lên đầu**, mỗi nhóm có nhãn "Hôm qua"/"3 ngày trước" và số lịch | ✅ Pass |
+| TC-T29 | Bấm tab "Đã xong", rồi tab "Tất cả" | Tab "Đã xong": chỉ còn lịch đã xong, đúng số ghi trên tab; "Tất cả": bỏ lọc | ✅ Pass |
+| TC-T30 | Có lịch đã xong ở 3 ngày khác nhau (hôm qua, 3 ngày trước, 6 ngày trước), bấm tab "Đã xong" | Nhóm theo từng ngày, **hôm qua lên đầu**, mỗi nhóm có nhãn "Hôm qua"/"3 ngày trước" | ✅ Pass |
 | TC-T31 | Bấm vào một lịch đã hủy mà khung giờ đã bị lịch khác chiếm → bấm "Khôi phục" trong popup | Popup vẫn mở, hiện hộp cảnh báo nêu lịch đang chiếm giờ; trạng thái vẫn là "Đã hủy" | ✅ Pass |
 
 ### A4. Đăng nhập

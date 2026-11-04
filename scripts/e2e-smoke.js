@@ -64,6 +64,7 @@ await send('Page.navigate', { url: APP });
 await sleep(800);
 await evaluate('localStorage.clear(); location.reload()');
 await sleep(800);
+await sleep(2500);
 await shot('00-login.png');
 // Headless không đăng nhập Google được, nên test luồng chính bằng chế độ khách
 await evaluate("document.querySelector('#btn-guest').click()");
@@ -93,6 +94,7 @@ check('E2E-19 bấm nút đóng → popup đóng', !(await dialogOpen()));
 
 await evaluate(fill('', '09:00', '10:00'));
 check('E2E-1 bỏ trống tiêu đề → hiện lỗi', (await evaluate("document.querySelector('[data-for=title]').textContent")) !== '');
+await sleep(300);
 await shot('01-validation.png');
 
 await evaluate(fill('Họp nhóm đồ án', '09:00', '10:00', 'Phòng 302'));
@@ -102,6 +104,7 @@ await evaluate(fill('Gọi khách hàng', '09:30', '10:15'));
 check('E2E-3 tạo lịch trùng → bị chặn, vẫn 1 lịch', (await count()) === 1);
 check('E2E-4 hộp cảnh báo trùng hiển thị', await evaluate("!document.querySelector('#conflict-box').hidden"));
 check('E2E-4b lịch trùng → popup vẫn mở để sửa', await dialogOpen());
+await sleep(300);
 await shot('02-conflict.png');
 
 await evaluate("document.querySelector('#conflict-box button').click()");
@@ -111,17 +114,17 @@ check('E2E-6 lưu với giờ gợi ý → 2 lịch', (await count()) === 2);
 
 await evaluate("document.querySelector('#btn-seed').click()");
 await sleep(200);
-const afterSeed = await count();
 
 await evaluate("document.querySelector('#btn-all').click()");
 await evaluate("document.querySelector('.cal-day .dot').parentElement.click()");
 await evaluate("document.querySelector('#btn-add-day').click()");
 check(
-  'E2E-20 "Thêm lịch vào ngày này" → popup điền sẵn ngày đó + giờ trống đầu tiên (10:45)',
+  'E2E-20 "Thêm lịch" ở ngày đã chọn → popup điền sẵn ngày đó + giờ trống đầu tiên (10:45)',
   await evaluate(`document.querySelector('#appt-dialog').open &&
     document.querySelector('#f-date').value === document.querySelector('#filter-date').value &&
     document.querySelector('#f-start').value === '10:45'`),
 );
+await sleep(300);
 await shot('05-add-day.png');
 await evaluate("document.querySelector('#btn-cancel').click()");
 check(
@@ -132,16 +135,29 @@ check(
   })()`),
 );
 
-await evaluate("[...document.querySelectorAll('.item')][0].querySelector('.btn.done').click()");
-check('E2E-7 đánh dấu xong', (await evaluate("document.querySelectorAll('.item.is-done').length")) === 1);
-await evaluate("[...document.querySelectorAll('.item.is-scheduled')].at(-1).querySelector('.btn.danger').click()");
-check('E2E-8 hủy lịch', (await evaluate("document.querySelectorAll('.item.is-cancelled').length")) === 1);
+// Thao tác trên một lịch: mở popup chi tiết rồi bấm nút theo nhãn
+const act = (findExpr, label) => `(() => {
+  ${findExpr}.click();
+  [...document.querySelectorAll('#detail-actions .btn')].find((b) => b.textContent.trim() === ${JSON.stringify(label)}).click();
+})()`;
+const closeDetail = () => evaluate("document.querySelector('#detail-dialog').open && document.querySelector('#detail-close').click()");
+
+await evaluate(act("document.querySelector('.item')", 'Xong'));
+await closeDetail();
+check('E2E-7 đánh dấu xong (qua popup chi tiết)', (await evaluate("document.querySelectorAll('.item.is-done').length")) === 1);
+await evaluate(act("[...document.querySelectorAll('.item.is-scheduled')].at(-1)", 'Hủy'));
+await closeDetail();
+check('E2E-8 hủy lịch → lịch biến khỏi danh sách ngày, sang tab "Đã hủy"', await evaluate(
+  "document.querySelectorAll('.item.is-cancelled').length === 0 && document.querySelector('.tab[data-filter=cancelled] .n').textContent === '1'",
+));
 await shot('03-list.png');
 
+const stored = () => evaluate("JSON.parse(localStorage.getItem('lich-hen-mini.v1:guest')).length");
+const storedBefore = await stored();
 await evaluate('location.reload()');
 await sleep(800);
 await evaluate("document.querySelector('#btn-all').click()");
-check('E2E-9 reload trang → dữ liệu còn nguyên', (await count()) === afterSeed);
+check('E2E-9 reload trang → dữ liệu còn nguyên', (await stored()) === storedBefore && (await count()) > 0);
 
 const errorOf = (field) => evaluate(`document.querySelector('[data-for=${field}]').textContent`);
 await evaluate(fill('Ngược giờ', '16:00', '15:00'));
@@ -164,58 +180,60 @@ check(
   (await evaluate(`[...document.querySelectorAll('.item .title')].some((t) => t.textContent.includes(${JSON.stringify(xss)})) && !window.pwned && !document.querySelector('.item img')`)),
 );
 
-await evaluate("document.querySelector('#filter-cancelled').click()");
-check('E2E-13 bỏ tick "Hiện lịch đã hủy" → ẩn lịch hủy', (await evaluate("document.querySelectorAll('.item.is-cancelled').length")) === 0);
-await evaluate("document.querySelector('#filter-cancelled').click()");
+await evaluate("document.querySelector('#btn-all').click()");
+check('E2E-13 tab "Tất cả" không hiện lịch đã hủy', (await evaluate("document.querySelectorAll('.item.is-cancelled').length")) === 0);
 
 // Hủy lịch 12:00, đặt lịch khác vào đúng giờ đó, rồi khôi phục lịch cũ → phải bị chặn
 const titleSel = (t) => `[...document.querySelectorAll('.item')].find((i) => i.querySelector('.title').textContent.startsWith(${JSON.stringify(t)}))`;
-await evaluate(`${titleSel('Ăn trưa với Lan')}.querySelector('.btn.danger').click()`);
+await evaluate(act(titleSel('Ăn trưa với Lan'), 'Hủy'));
+await closeDetail();
 await evaluate(fill('Lịch chen vào', '12:00', '12:30'));
-await evaluate(`${titleSel('Ăn trưa với Lan')}.querySelector('.actions .btn').click()`);
+await evaluate("document.querySelector('.tab[data-filter=cancelled]').click()");
+await evaluate(act(titleSel('Ăn trưa với Lan'), 'Khôi phục'));
 check(
-  'E2E-14 khôi phục lịch hủy khi giờ đã bị chiếm → bị chặn',
-  (await evaluate(`${titleSel('Ăn trưa với Lan')}.classList.contains('is-cancelled') && document.querySelector('#toast').classList.contains('error')`)),
+  'E2E-14 khôi phục lịch hủy khi giờ đã bị chiếm → bị chặn, báo lỗi ngay trong popup',
+  await evaluate(`!document.querySelector('#detail-error').hidden &&
+    document.querySelector('#detail-error').textContent.includes('Lịch chen vào') &&
+    document.querySelector('#detail-status').textContent === 'Đã hủy'`),
 );
+await closeDetail();
 
-// Badge thống kê là nút lọc
-const chipCheck = (key, cls) => `(() => {
-  const chip = document.querySelector('.chip[data-filter=${key}]');
-  chip.click();
+// Tab lọc theo trạng thái
+const tabCheck = (key, cls) => `(() => {
+  document.querySelector('.tab[data-filter=${key}]').click();
   const items = [...document.querySelectorAll('#list .item')];
-  const n = parseInt(document.querySelector('.chip[data-filter=${key}]').textContent, 10);
-  return document.querySelector('.chip[data-filter=${key}]').classList.contains('active') &&
+  const n = parseInt(document.querySelector('.tab[data-filter=${key}] .n').textContent || '0', 10);
+  return document.querySelector('.tab[data-filter=${key}]').classList.contains('on') &&
     items.length === n && items.every((i) => i.classList.contains('${cls}'));
 })()`;
-check('E2E-21 bấm badge "đã xong" → chỉ hiện lịch đã xong, đúng số lượng', await evaluate(chipCheck('done', 'is-done')));
-check('E2E-22 bấm badge "đã hủy" → chỉ hiện lịch đã hủy, đúng số lượng', await evaluate(chipCheck('cancelled', 'is-cancelled')));
-check('E2E-23 bấm badge "sắp tới" → chỉ hiện lịch chưa diễn ra', await evaluate(chipCheck('upcoming', 'is-scheduled')));
+check('E2E-21 tab "Đã xong" → chỉ hiện lịch đã xong, đúng số lượng', await evaluate(tabCheck('done', 'is-done')));
+check('E2E-22 tab "Đã hủy" → chỉ hiện lịch đã hủy, đúng số lượng', await evaluate(tabCheck('cancelled', 'is-cancelled')));
+check('E2E-23 tab "Sắp tới" → chỉ hiện lịch chưa diễn ra', await evaluate(tabCheck('upcoming', 'is-scheduled')));
 await shot('06-chip-filter.png');
 check(
-  'E2E-25 bấm tiêu đề nhóm ngày → chọn đúng ngày đó trên lịch, bỏ lọc badge',
+  'E2E-25 bấm tiêu đề nhóm ngày → chọn đúng ngày đó trên lịch, bỏ lọc trạng thái',
   await evaluate(`(() => {
     document.querySelector('.day-link').click();
     const d = document.querySelector('#filter-date').value;
-    return !!d && document.querySelector('.cal-day.selected')?.dataset.date === d && !document.querySelector('.chip.active');
+    return !!d && document.querySelector('.cal-day.selected')?.dataset.date === d && !document.querySelector('.tab.on[data-filter]');
   })()`),
 );
-await evaluate("document.querySelector('.chip[data-filter=upcoming]').click()");
-await evaluate("document.querySelector('.chip[data-filter=upcoming]').click()");
-check('E2E-24 bấm lại badge đang chọn → bỏ lọc', await evaluate("!document.querySelector('.chip.active') && document.querySelector('#btn-all').classList.contains('on')"));
+await evaluate("document.querySelector('#btn-all').click()");
+check('E2E-24 bấm "Tất cả" → bỏ mọi bộ lọc', await evaluate("!document.querySelector('.tab.on[data-filter]') && document.querySelector('#btn-all').classList.contains('on')"));
 
 // Popup chi tiết
-await evaluate("document.querySelector('#btn-all').click()");
 check(
   'E2E-26 bấm vào một lịch → popup chi tiết đúng tiêu đề, có ngày/giờ/thời lượng',
   await evaluate(`(() => {
     const item = document.querySelector('.item.is-scheduled');
-    const title = item.querySelector('.title').firstChild.textContent;
-    item.querySelector('.item-open').click();
+    const title = item.querySelector('.title').textContent;
+    item.click();
     const d = document.querySelector('#detail-dialog');
     return d.open && document.querySelector('#detail-title').textContent === title &&
       document.querySelectorAll('#detail-rows li').length >= 3 && /giờ|phút/.test(document.querySelector('#detail-rows').textContent);
   })()`),
 );
+await sleep(300);
 await shot('08-detail.png');
 await evaluate("document.querySelector('#detail-actions .btn.done').click()");
 check(

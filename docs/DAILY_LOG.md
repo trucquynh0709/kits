@@ -33,6 +33,7 @@ Mỗi ngày gồm: **Hôm qua** đã làm gì · **Hôm nay** làm gì · **Vư�
 - **Vướng mắc:**
   - Ảnh chụp headless hiển thị ngày theo định dạng en-US vì locale của trình duyệt headless. Trình duyệt thật dùng locale của máy nên không phải lỗi.
   - Headless không đăng nhập Google được, nên e2e đi bằng chế độ khách; luồng Google để test thủ công (TC-T23 → T25).
+  - Góp ý "UI rối mắt, trông như AI": nhận ra lỗi do lặp thao tác (nút trên từng dòng + trong popup), quá nhiều pill/badge/màu, trang đăng nhập kiểu landing. Xử lý: dồn thao tác vào popup chi tiết, gộp lọc thành tab, chỉ dùng cam cho hành động chính.
   - Người dùng bản cũ có dữ liệu ở key chung → viết code tự chuyển dữ liệu đó sang tài khoản khách (AU-08).
 
 ### Ngày 6 — 09/11/2026

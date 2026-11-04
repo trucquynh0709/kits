@@ -37,7 +37,7 @@ Người dùng ghi lịch hẹn rải rác ở giấy note, tin nhắn, ứng d�
 | ![Validation](docs/screenshots/01-validation.png) | ![Mobile](docs/screenshots/04-mobile.png) |
 | **Đăng nhập** | **Thêm lịch vào ngày đã chọn** |
 | ![Đăng nhập](docs/screenshots/00-login.png) | ![Thêm lịch](docs/screenshots/05-add-day.png) |
-| **Lọc "đã xong" trên nhiều ngày** | **Chi tiết lịch hẹn** |
+| **Tab "Đã xong" trên nhiều ngày** | **Chi tiết lịch hẹn** |
 | ![Lịch sử nhiều ngày](docs/screenshots/07-history-multi-day.png) | ![Chi tiết](docs/screenshots/08-detail.png) |
 
 ## 4. Chức năng
@@ -51,8 +51,8 @@ Người dùng ghi lịch hẹn rải rác ở giấy note, tin nhắn, ứng d�
    - Lịch đã hủy hoặc đã xong **không chiếm giờ**.
    - Khi **khôi phục** một lịch đã hủy, app kiểm tra trùng lại.
 4. **Gợi ý giờ trống gần nhất** có cùng độ dài, bấm một lần là form tự điền.
-5. **Danh sách theo ngày:** sắp theo ngày và giờ, lọc theo một ngày cụ thể. Badge thống kê **sắp tới / đã xong / đã hủy** bấm được: bấm để xem đúng các lịch đó trên tất cả các ngày, bấm lại để bỏ lọc. Mỗi nhóm ngày có nhãn tương đối (*Ngày mai*, *Còn 3 ngày*, *6 ngày trước*) và số lịch; lịch sử (đã xong / đã hủy) xếp **mới nhất lên đầu**. Bấm tiêu đề ngày để nhảy tới ngày đó trên lịch.
-6. **Chi tiết lịch hẹn:** bấm vào một lịch để mở popup thông tin: trạng thái (sắp tới / đang diễn ra / đã qua / đã xong / đã hủy), ngày kèm nhãn tương đối, giờ và thời lượng, ghi chú, thời điểm tạo. Thao tác ngay trong popup: Xong, Hủy, Khôi phục, Bỏ đánh dấu, Xóa (có xác nhận). Các nút này cũng có sẵn trên từng dòng của danh sách.
+5. **Danh sách theo ngày:** sắp theo ngày và giờ. Một hàng tab lọc: **Tất cả · Hôm nay · Sắp tới · Đã xong · Đã hủy** (kèm số lượng). Lịch đã hủy chỉ nằm ở tab "Đã hủy" cho danh sách đỡ rối. Mỗi nhóm ngày có nhãn tương đối (*Ngày mai*, *Còn 3 ngày*, *6 ngày trước*) và số lịch; lịch sử (đã xong / đã hủy) xếp **mới nhất lên đầu**. Bấm tiêu đề ngày để nhảy tới ngày đó trên lịch.
+6. **Chi tiết lịch hẹn:** bấm vào một lịch để mở popup thông tin: trạng thái (sắp tới / đang diễn ra / đã qua / đã xong / đã hủy), ngày kèm nhãn tương đối, giờ và thời lượng, ghi chú, thời điểm tạo. Mọi thao tác nằm trong popup: Xong, Hủy, Khôi phục, Bỏ đánh dấu, Xóa (có xác nhận); mỗi dòng danh sách chỉ hiện giờ, tiêu đề, trạng thái.
 7. **Lịch tháng** kiểu date picker: ngày có hẹn được đánh dấu chấm. Bấm một ngày để lọc danh sách; khung bên dưới có nút **"Thêm lịch vào ngày này"** (tự tắt với ngày đã qua).
 8. Lưu tự động vào localStorage; giao diện sáng tông be/cam, responsive trên điện thoại.
 
