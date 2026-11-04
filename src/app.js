@@ -5,6 +5,7 @@ import {
   toMs,
   fromMs,
   createAppointment,
+  suggestFreeSlot,
   changeStatus,
   deleteAppointment,
   groupByDate,
@@ -27,6 +28,7 @@ const fields = {
   note: $('#f-note'),
 };
 const conflictBox = $('#conflict-box');
+const dialog = $('#appt-dialog');
 const listEl = $('#list');
 const filterDate = $('#filter-date');
 const filterCancelled = $('#filter-cancelled');
@@ -79,17 +81,63 @@ function persist(next) {
   render();
 }
 
-// ---------- form ----------
-function setDefaultTimes() {
-  const now = new Date();
-  const next = new Date(now);
-  next.setMinutes(Math.ceil((now.getMinutes() + 1) / 30) * 30, 0, 0);
-  const start = fromMs(next.getTime());
-  const end = fromMs(next.getTime() + 30 * 60 * 1000);
-  fields.date.value = start.slice(0, 10);
-  fields.start.value = hhmm(start);
-  fields.end.value = start.slice(0, 10) === end.slice(0, 10) ? hhmm(end) : '23:59';
+// ---------- form (popup) ----------
+const SLOT_MIN = 30;
+
+// Giờ mặc định = khung trống 30 phút đầu tiên của ngày: hôm nay thì tính từ nửa giờ kế tiếp,
+// ngày khác thì từ 09:00. Người dùng mở popup là thấy ngay một giờ đặt được.
+function setSmartTimes(date) {
+  let start;
+  if (date === todayStr()) {
+    const next = new Date();
+    next.setMinutes(Math.ceil((next.getMinutes() + 1) / 30) * 30, 0, 0);
+    start = next.getTime();
+  } else {
+    start = toMs(`${date}T09:00`);
+  }
+  const candidate = { start: fromMs(start), end: fromMs(start + SLOT_MIN * 60 * 1000) };
+  const slot = suggestFreeSlot(candidate, appointments) ?? candidate;
+  const fits = slot.start.slice(0, 10) === date && slot.end.slice(0, 10) === date;
+  const chosen = fits ? slot : candidate.end.slice(0, 10) === date ? candidate : null;
+  fields.date.value = date;
+  fields.start.value = chosen ? hhmm(chosen.start) : '23:00';
+  fields.end.value = chosen ? hhmm(chosen.end) : '23:30';
 }
+
+function openForm(date) {
+  const today = todayStr();
+  const day = date && date >= today ? date : today;
+  form.reset();
+  showErrors();
+  showConflicts();
+  updateNoteCount();
+  setSmartTimes(day);
+  $('#form-sub').textContent = formatDay(day);
+  if (!dialog.open) dialog.showModal();
+  fields.title.focus();
+}
+
+function closeForm() {
+  if (dialog.open) dialog.close();
+}
+
+dialog.addEventListener('close', () => {
+  if (highlightIds.size) {
+    highlightIds = new Set();
+    render();
+  }
+});
+// Bấm ra vùng tối bên ngoài popup thì đóng
+dialog.addEventListener('click', (e) => {
+  if (e.target === dialog) closeForm();
+});
+$('#btn-close').addEventListener('click', closeForm);
+$('#btn-cancel').addEventListener('click', closeForm);
+$('#btn-new').addEventListener('click', () => openForm(filterDate.value));
+$('#btn-add-day').addEventListener('click', () => openForm(filterDate.value));
+fields.date.addEventListener('change', () => {
+  if (fields.date.value) $('#form-sub').textContent = formatDay(fields.date.value);
+});
 
 function readForm() {
   const date = fields.date.value;
@@ -156,12 +204,8 @@ form.addEventListener('submit', (e) => {
     return;
   }
 
-  showErrors();
-  showConflicts();
   highlightIds = new Set();
-  fields.title.value = '';
-  fields.note.value = '';
-  updateNoteCount();
+  closeForm();
   filterDate.value = result.appointment.start.slice(0, 10);
   persist(result.appointments);
   toast(`Đã lưu "${result.appointment.title}" lúc ${formatRange(result.appointment)}.`);
@@ -257,15 +301,22 @@ function render() {
   );
 
   const groups = groupByDate(visible);
+  const today = todayStr();
   if (groups.length === 0) {
     const msg = filterDate.value
       ? `Không có lịch hẹn nào vào ${formatDay(filterDate.value)}.`
-      : 'Chưa có lịch hẹn nào. Hãy tạo lịch đầu tiên ở form bên trái.';
-    listEl.replaceChildren(el('div', { className: 'empty' }, icon('calendar-days', { size: 36 }), el('p', { textContent: msg })));
+      : 'Chưa có lịch hẹn nào. Hãy tạo lịch hẹn đầu tiên.';
+    const canAdd = !filterDate.value || filterDate.value >= today;
+    const cta = canAdd
+      ? el('button', { type: 'button', className: 'btn small add-day' }, icon('plus', { size: 15 }), 'Tạo lịch hẹn')
+      : null;
+    cta?.addEventListener('click', () => openForm(filterDate.value));
+    listEl.replaceChildren(
+      el('div', { className: 'empty' }, icon('calendar-days', { size: 36 }), el('p', { textContent: msg }), cta),
+    );
     return;
   }
 
-  const today = todayStr();
   listEl.replaceChildren(
     ...groups.map(({ date, items }) =>
       el(
@@ -323,13 +374,31 @@ function renderCalendar() {
       btn.addEventListener('click', () => {
         const same = filterDate.value === c.date;
         filterDate.value = same ? '' : c.date;
-        // Chọn ngày chưa qua thì điền sẵn vào form để tạo lịch nhanh
-        if (!same && c.date >= today) fields.date.value = c.date;
         render();
       });
       return btn;
     }),
   );
+  renderDayPanel(counts, today);
+}
+
+// Khung dưới lịch: ngày đang chọn + nút thêm lịch vào đúng ngày đó.
+function renderDayPanel(counts, today) {
+  const day = filterDate.value;
+  const addBtn = $('#btn-add-day');
+  if (!day) {
+    $('#day-title').textContent = 'Bấm vào một ngày';
+    $('#day-meta').textContent = 'để xem lịch và thêm lịch hẹn cho ngày đó';
+    addBtn.hidden = true;
+    return;
+  }
+  const n = counts.get(day) ?? 0;
+  const past = day < today;
+  $('#day-title').textContent = formatDay(day);
+  $('#day-meta').textContent = `${n ? `${n} lịch hẹn` : 'Chưa có lịch hẹn'}${past ? ' · Ngày đã qua' : ''}`;
+  addBtn.hidden = false;
+  addBtn.disabled = past;
+  addBtn.title = past ? 'Không thể thêm lịch vào ngày đã qua' : '';
 }
 
 const shiftMonth = (delta) => {
@@ -385,11 +454,7 @@ function showApp(nextUser) {
   saveSession(user);
   appointments = loadAppointments(user.id);
   highlightIds = new Set();
-  form.reset();
-  showErrors();
-  showConflicts();
-  updateNoteCount();
-  setDefaultTimes();
+  closeForm();
   filterDate.value = '';
 
   $('#user-name').textContent = user.guest ? 'Khách (chưa đăng nhập)' : user.name;
@@ -401,6 +466,7 @@ function showApp(nextUser) {
   if (user.guest) $('#user-initial').replaceChildren(icon('user', { size: 16 }));
   else $('#user-initial').textContent = user.name.trim().charAt(0).toUpperCase();
   $('#user-chip').hidden = false;
+  $('#btn-new').hidden = false;
   $('#login-view').hidden = true;
   $('#app-view').hidden = false;
   render();
@@ -410,6 +476,8 @@ function showLogin() {
   user = null;
   appointments = [];
   $('#user-chip').hidden = true;
+  $('#btn-new').hidden = true;
+  closeForm();
   $('#app-view').hidden = true;
   $('#login-view').hidden = false;
   $('#login-error').textContent = '';

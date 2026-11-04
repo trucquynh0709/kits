@@ -73,6 +73,7 @@ const fill = (title, start, end, note = '') => `
   (() => {
     const d = new Date(); d.setDate(d.getDate() + 1);
     const day = d.toLocaleDateString('sv-SE');
+    if (!document.querySelector('#appt-dialog').open) document.querySelector('#btn-new').click();
     const set = (sel, v) => { const el = document.querySelector(sel); el.value = v; el.dispatchEvent(new Event('input')); };
     set('#f-title', ${JSON.stringify(title)}); set('#f-date', day);
     set('#f-start', '${start}'); set('#f-end', '${end}'); set('#f-note', ${JSON.stringify(note)});
@@ -84,17 +85,23 @@ const check = (name, cond) => {
   results.push(`${cond ? 'PASS' : 'FAIL'}  ${name}`);
 };
 check('E2E-0 vào app ở chế độ khách', await evaluate("!document.querySelector('#app-view').hidden && document.querySelector('#login-view').hidden"));
+const dialogOpen = () => evaluate("document.querySelector('#appt-dialog').open");
+await evaluate("document.querySelector('#btn-new').click()");
+check('E2E-18 bấm CTA "Tạo lịch hẹn" → mở popup', await dialogOpen());
+await evaluate("document.querySelector('#btn-close').click()");
+check('E2E-19 bấm nút đóng → popup đóng', !(await dialogOpen()));
 
 await evaluate(fill('', '09:00', '10:00'));
 check('E2E-1 bỏ trống tiêu đề → hiện lỗi', (await evaluate("document.querySelector('[data-for=title]').textContent")) !== '');
 await shot('01-validation.png');
 
 await evaluate(fill('Họp nhóm đồ án', '09:00', '10:00', 'Phòng 302'));
-check('E2E-2 tạo lịch hợp lệ → có 1 lịch', (await count()) === 1);
+check('E2E-2 tạo lịch hợp lệ → có 1 lịch, popup tự đóng', (await count()) === 1 && !(await dialogOpen()));
 
 await evaluate(fill('Gọi khách hàng', '09:30', '10:15'));
 check('E2E-3 tạo lịch trùng → bị chặn, vẫn 1 lịch', (await count()) === 1);
 check('E2E-4 hộp cảnh báo trùng hiển thị', await evaluate("!document.querySelector('#conflict-box').hidden"));
+check('E2E-4b lịch trùng → popup vẫn mở để sửa', await dialogOpen());
 await shot('02-conflict.png');
 
 await evaluate("document.querySelector('#conflict-box button').click()");
@@ -108,6 +115,15 @@ const afterSeed = await count();
 
 await evaluate("document.querySelector('#btn-all').click()");
 await evaluate("document.querySelector('.cal-day .dot').parentElement.click()");
+await evaluate("document.querySelector('#btn-add-day').click()");
+check(
+  'E2E-20 "Thêm lịch vào ngày này" → popup điền sẵn ngày đó + giờ trống đầu tiên (10:45)',
+  await evaluate(`document.querySelector('#appt-dialog').open &&
+    document.querySelector('#f-date').value === document.querySelector('#filter-date').value &&
+    document.querySelector('#f-start').value === '10:45'`),
+);
+await shot('05-add-day.png');
+await evaluate("document.querySelector('#btn-cancel').click()");
 check(
   'E2E-17 bấm ngày có chấm trên lịch tháng → ngày được chọn, danh sách lọc theo ngày đó',
   await evaluate(`(() => {
@@ -133,6 +149,7 @@ check('E2E-10 giờ kết thúc trước giờ bắt đầu → lỗi', (await e
 
 await evaluate(`(() => {
   const d = new Date(); d.setDate(d.getDate() - 1);
+  if (!document.querySelector('#appt-dialog').open) document.querySelector('#btn-new').click();
   document.querySelector('#f-title').value = 'Hôm qua';
   document.querySelector('#f-date').value = d.toLocaleDateString('sv-SE');
   document.querySelector('#f-start').value = '09:00'; document.querySelector('#f-end').value = '10:00';

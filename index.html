@@ -23,11 +23,14 @@
             <small>Đặt lịch nhanh, không lo trùng giờ</small>
           </span>
         </a>
+        <div class="top-actions">
+        <button type="button" class="btn cta" id="btn-new" hidden><i data-icon="plus"></i>Tạo lịch hẹn</button>
         <div id="user-chip" class="user-chip" hidden>
           <img id="user-avatar" alt="" referrerpolicy="no-referrer" hidden />
           <span id="user-initial" class="avatar-fallback" aria-hidden="true"></span>
           <span id="user-name"></span>
-          <button type="button" class="btn small ghost" id="btn-logout"><i data-icon="log-out" data-size="15"></i>Đăng xuất</button>
+          <button type="button" class="btn small ghost" id="btn-logout" aria-label="Đăng xuất"><i data-icon="log-out" data-size="15"></i><span class="label">Đăng xuất</span></button>
+        </div>
         </div>
       </div>
     </header>
@@ -71,46 +74,13 @@
             <span>T2</span><span>T3</span><span>T4</span><span>T5</span><span>T6</span><span>T7</span><span class="sun">CN</span>
           </div>
           <div id="cal-days" class="cal-grid cal-days"></div>
-        </section>
-
-        <section class="card form-card" aria-labelledby="form-heading">
-          <h2 id="form-heading">Tạo lịch hẹn</h2>
-          <form id="appt-form" novalidate>
-            <label class="field">
-              <span>Tiêu đề <b aria-hidden="true">*</b></span>
-              <input id="f-title" name="title" type="text" maxlength="120" placeholder="VD: Khám răng định kỳ" autocomplete="off" />
-              <small class="error" data-for="title"></small>
-            </label>
-
-            <label class="field">
-              <span>Ngày <b aria-hidden="true">*</b></span>
-              <input id="f-date" name="date" type="date" />
-            </label>
-
-            <div class="row">
-              <label class="field">
-                <span>Bắt đầu <b aria-hidden="true">*</b></span>
-                <input id="f-start" name="start" type="time" step="300" />
-              </label>
-              <label class="field">
-                <span>Kết thúc <b aria-hidden="true">*</b></span>
-                <input id="f-end" name="end" type="time" step="300" />
-              </label>
+          <div id="day-panel" class="day-panel">
+            <div class="day-info">
+              <strong id="day-title"></strong>
+              <small id="day-meta"></small>
             </div>
-            <small class="error" data-for="start"></small>
-            <small class="error" data-for="end"></small>
-
-            <label class="field">
-              <span>Ghi chú</span>
-              <textarea id="f-note" name="note" rows="2" maxlength="520" placeholder="Địa điểm, người liên hệ…"></textarea>
-              <small class="hint"><span id="note-count">0</span>/500</small>
-              <small class="error" data-for="note"></small>
-            </label>
-
-            <div id="conflict-box" class="conflict" role="alert" hidden></div>
-
-            <button type="submit" class="btn primary"><i data-icon="calendar-plus"></i>Lưu lịch hẹn</button>
-          </form>
+            <button type="button" class="btn small add-day" id="btn-add-day"><i data-icon="plus" data-size="15"></i>Thêm lịch vào ngày này</button>
+          </div>
         </section>
       </div>
 
@@ -139,6 +109,55 @@
         <button type="button" class="btn link" id="btn-seed"><i data-icon="plus" data-size="15"></i>Nạp dữ liệu mẫu để thử</button>
       </section>
     </main>
+
+    <dialog id="appt-dialog" class="modal" aria-labelledby="form-heading">
+      <div class="modal-head">
+        <div>
+          <h2 id="form-heading">Tạo lịch hẹn</h2>
+          <p id="form-sub" class="muted"></p>
+        </div>
+        <button type="button" class="icon-btn" id="btn-close" aria-label="Đóng"><i data-icon="x"></i></button>
+      </div>
+      <form id="appt-form" novalidate>
+        <label class="field">
+          <span>Tiêu đề <b aria-hidden="true">*</b></span>
+          <input id="f-title" name="title" type="text" maxlength="120" placeholder="VD: Khám răng định kỳ" autocomplete="off" />
+          <small class="error" data-for="title"></small>
+        </label>
+
+        <label class="field">
+          <span>Ngày <b aria-hidden="true">*</b></span>
+          <input id="f-date" name="date" type="date" />
+        </label>
+
+        <div class="row">
+          <label class="field">
+            <span>Bắt đầu <b aria-hidden="true">*</b></span>
+            <input id="f-start" name="start" type="time" step="300" />
+          </label>
+          <label class="field">
+            <span>Kết thúc <b aria-hidden="true">*</b></span>
+            <input id="f-end" name="end" type="time" step="300" />
+          </label>
+        </div>
+        <small class="error" data-for="start"></small>
+        <small class="error" data-for="end"></small>
+
+        <label class="field">
+          <span>Ghi chú</span>
+          <textarea id="f-note" name="note" rows="2" maxlength="520" placeholder="Địa điểm, người liên hệ…"></textarea>
+          <small class="hint"><span id="note-count">0</span>/500</small>
+          <small class="error" data-for="note"></small>
+        </label>
+
+        <div id="conflict-box" class="conflict" role="alert" hidden></div>
+
+        <div class="modal-actions">
+          <button type="button" class="btn ghost" id="btn-cancel">Hủy</button>
+          <button type="submit" class="btn primary"><i data-icon="calendar-plus"></i>Lưu lịch hẹn</button>
+        </div>
+      </form>
+    </dialog>
 
     <div id="toast" class="toast" role="status" hidden></div>
 
