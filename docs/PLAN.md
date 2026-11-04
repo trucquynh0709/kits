@@ -1,0 +1,50 @@
+# Kế hoạch & WBS (1 tuần: 04/11 – 10/11/2026)
+
+> Ngày bắt đầu lấy theo ngày khởi tạo repo. Nếu lịch thật của bạn khác, chỉnh lại cột **Ngày**.
+
+## Mục tiêu tuần
+
+Một website đặt lịch hẹn cá nhân, chạy end-to-end, **không cho tạo lịch trùng giờ**, có test tự động, có tài liệu và đã deploy.
+
+## WBS
+
+| ID | Hạng mục / Task | Ngày | Ước lượng | Definition of Done | Trạng thái |
+|---|---|---|---|---|---|
+| **1** | **Phân tích & thiết kế** | | | | |
+| 1.1 | Chốt phạm vi MVP, danh sách ngoài phạm vi | N1 | 1h | Có bảng "giữ / cắt" trong DESIGN.md, mỗi mục có lý do | ✅ |
+| 1.2 | Sơ đồ Use Case, Class, State, luồng kiểm tra trùng | N1 | 1.5h | 4 sơ đồ có ảnh PNG trong `docs/diagrams/` | ✅ |
+| 1.3 | Chọn công nghệ | N1 | 0.5h | DECISIONS.md có lý do và đánh đổi cho từng lựa chọn | ✅ |
+| **2** | **Logic lõi** (`scheduler.js`) | | | | |
+| 2.1 | Validation dữ liệu | N2 | 1.5h | Bắt lỗi tiêu đề rỗng/quá dài, ngày sai, end ≤ start, quá khứ, > 24h, ghi chú dài; có unit test cho từng lỗi | ✅ |
+| 2.2 | Kiểm tra trùng giờ | N2 | 2h | Đủ 5 kiểu chồng + biên nối tiếp + qua nửa đêm + bỏ qua lịch hủy/xong; test pass | ✅ |
+| 2.3 | Đổi trạng thái + kiểm tra trùng khi khôi phục | N3 | 1h | Chặn chuyển trạng thái sai; khôi phục bị chặn khi khung giờ đã có lịch khác; test pass | ✅ |
+| 2.4 | Gợi ý khung giờ trống | N3 | 1h | Nhảy qua được chuỗi lịch liền nhau; test pass | ✅ |
+| **3** | **Giao diện** | | | | |
+| 3.1 | Form tạo lịch + hiển thị lỗi theo từng ô | N3 | 2h | Lỗi hiện dưới đúng ô, ô lỗi viền đỏ | ✅ |
+| 3.2 | Danh sách nhóm theo ngày, lọc ngày, ẩn/hiện lịch hủy | N4 | 2h | Ngày và giờ sắp tăng dần; có nhãn "Hôm nay"; có thông báo khi danh sách rỗng | ✅ |
+| 3.3 | Nút Xong / Hủy / Khôi phục / Xóa | N4 | 1h | Thao tác xong, reload trang vẫn giữ nguyên trạng thái | ✅ |
+| 3.4 | Hộp cảnh báo trùng + nút dùng giờ gợi ý | N4 | 1h | Liệt kê lịch bị trùng, highlight trong danh sách, bấm gợi ý thì form tự điền giờ | ✅ |
+| 3.5 | Responsive + dark mode | N5 | 1h | Không cuộn ngang ở màn hình 390px | ✅ |
+| **4** | **Kiểm thử** | | | | |
+| 4.1 | Unit test logic | N2–N3 | (trong 2.x) | `npm test` pass 36/36 | ✅ |
+| 4.2 | E2E smoke test trên trình duyệt | N5 | 1.5h | `node scripts/e2e-smoke.js` pass 14/14, tự chụp ảnh màn hình | ✅ |
+| 4.3 | Test thủ công theo TEST_CASES.md | N5 | 1h | Mọi case có kết quả Pass/Fail | ✅ |
+| **5** | **Triển khai & bàn giao** | | | | |
+| 5.1 | Đẩy GitHub + CI chạy test | N6 | 0.5h | Badge/Actions xanh | ☐ |
+| 5.2 | Deploy Vercel/Netlify | N6 | 0.5h | Có link công khai trong README | ☐ |
+| 5.3 | Quay video demo 1–2 phút | N6 | 1h | Theo DEMO_SCRIPT.md, link trong README | ☐ |
+| 5.4 | README, daily log, tự đánh giá | N7 | 1.5h | Đủ các mục theo tiêu chí chấm | ✅ |
+| 5.5 | Buffer: sửa lỗi phát sinh, rà soát | N7 | 2h | — | ☐ |
+
+**Tổng ước lượng:** ~26h, khoảng 3–4h/ngày.
+
+## Mốc
+
+- **M1 (cuối N2):** logic trùng giờ có test pass. Đây là mốc quan trọng nhất; nếu trễ thì cắt task 2.4 và 3.5.
+- **M2 (cuối N4):** luồng tạo → xem → xong/hủy chạy end-to-end trên UI.
+- **M3 (cuối N6):** đã deploy và có video.
+- **M4 (N7):** nộp bài.
+
+## Quy tắc cắt phạm vi
+
+Nếu một task trễ quá 50% ước lượng, cắt theo thứ tự ưu tiên thấp đến cao: dark mode → gợi ý giờ trống → lọc lịch hủy. **Không bao giờ cắt** kiểm tra trùng và test của nó.

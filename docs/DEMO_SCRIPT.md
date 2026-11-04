@@ -1,0 +1,14 @@
+# Kịch bản video demo (~1 phút 45 giây)
+
+Gợi ý quay: OBS hoặc Xbox Game Bar (`Win + Alt + R`), cửa sổ trình duyệt 1280×800, mở link deploy thật. Xóa localStorage trước khi quay.
+
+| Thời điểm | Thao tác trên màn hình | Lời nói gợi ý |
+|---|---|---|
+| 0:00–0:10 | Mở trang | "Đây là Lịch Hẹn Mini, app đặt lịch cá nhân có kiểm tra trùng giờ, đã deploy trên Vercel." |
+| 0:10–0:25 | Bấm Lưu khi form trống → hiện lỗi. Chọn giờ kết thúc trước giờ bắt đầu → hiện lỗi | "Form có validation: thiếu tiêu đề, giờ kết thúc trước giờ bắt đầu, đặt lịch trong quá khứ đều bị chặn." |
+| 0:25–0:40 | Tạo "Họp nhóm" 09:00–10:00 ngày mai | "Tạo lịch hợp lệ thì lịch xuất hiện trong danh sách, nhóm theo ngày." |
+| 0:40–1:05 | Tạo "Gọi khách" 09:30–10:15 → hộp cảnh báo, lịch cũ viền vàng → bấm "Dùng giờ trống gần nhất" → Lưu | "Lịch thứ hai chồng giờ nên bị chặn. App chỉ ra lịch bị trùng và gợi ý khung trống gần nhất có cùng độ dài." |
+| 1:05–1:15 | Tạo 10:45–11:15 | "Lịch nối tiếp đúng lúc lịch trước kết thúc thì không tính là trùng." |
+| 1:15–1:30 | Bấm Xong một lịch, Hủy một lịch. Hủy "Họp nhóm", tạo lịch khác 09:00, rồi bấm Khôi phục "Họp nhóm" → bị chặn | "Có thể đánh dấu xong hoặc hủy. Lịch đã hủy giải phóng khung giờ, nhưng nếu khung đó đã bị lịch khác chiếm thì không khôi phục được." |
+| 1:30–1:40 | Nhấn F5 → dữ liệu còn. Lọc theo ngày | "Dữ liệu lưu trong localStorage, có thể lọc theo ngày." |
+| 1:40–1:50 | Chuyển sang terminal chạy `npm test` → 36 pass | "Logic kiểm tra trùng có 36 unit test, gồm 13 case cho việc tạo lịch trùng." |
