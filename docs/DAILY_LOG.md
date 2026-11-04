@@ -56,4 +56,4 @@ Mỗi ngày gồm: **Hôm qua** đã làm gì · **Hôm nay** làm gì · **Vư�
 | R2 | Định nghĩa "trùng" chưa rõ: lịch nối tiếp, lịch đã xong/hủy | N1–N3 | Trung bình: sai định nghĩa thì người dùng khó chịu | Chọn khoảng nửa mở; chỉ lịch `scheduled` chiếm giờ; viết test cho từng quy tắc | TC-06, 07, 09, 10 |
 | R3 | **Thư viện:** Jest + ES modules cần thêm cấu hình | N2 | Thấp–Trung bình: mất thời gian cấu hình | **Đổi thư viện** sang `node:test` có sẵn | 0 dependency, CI đơn giản |
 | R4 | Bug khôi phục lịch đã hủy gây trùng | N3 | Cao: phá vỡ đúng tính năng chính | Kiểm tra trùng lại mỗi khi chuyển về `scheduled` | TC-30, TC-T09 |
-| R5 | Không có thời gian quay video / deploy cuối tuần | N1 | Trung bình | Dành N6 riêng cho việc này, N7 làm buffer | _(cập nhật)_ |
+| R5 | Không có thời gian quay video / deploy cuối tuần | N1 | Trung bình | Dành N6 riêng cho việc này, N7 làm buffer | Deploy xong sớm. **Thay đổi yêu cầu:** giảng viên không cần video, chỉ cần mô tả dự án → làm trang `/about.html` ngay trong web thay cho video |
