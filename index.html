@@ -5,41 +5,66 @@
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <title>Lịch Hẹn Mini</title>
     <meta name="description" content="Đặt và quản lý lịch hẹn cá nhân, tự động phát hiện trùng giờ." />
-    <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>📅</text></svg>" />
+    <meta name="theme-color" content="#5b5bf0" />
+    <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'><rect width='32' height='32' rx='8' fill='%235b5bf0'/><rect x='7' y='9' width='18' height='16' rx='3' fill='white'/><rect x='7' y='9' width='18' height='5' rx='2' fill='%23c7c7ff'/><circle cx='16' cy='19.5' r='3' fill='%235b5bf0'/></svg>" />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro:wght@400;500;600;700&display=swap" />
     <link rel="stylesheet" href="css/style.css" />
   </head>
   <body>
     <header class="topbar">
       <div class="wrap topbar-inner">
-        <div>
-          <h1>📅 Lịch Hẹn Mini</h1>
-          <p class="tagline">Đặt lịch nhanh, không lo trùng giờ.</p>
-        </div>
+        <a class="brand" href="./" aria-label="Lịch Hẹn Mini">
+          <span class="logo" aria-hidden="true">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4.5" width="18" height="16" rx="3"/><path d="M3 9.5h18M8 2.5v4M16 2.5v4"/><path d="m9 15 2 2 4-4"/></svg>
+          </span>
+          <span class="brand-text">
+            <strong>Lịch Hẹn Mini</strong>
+            <small>Đặt lịch nhanh, không lo trùng giờ</small>
+          </span>
+        </a>
         <div id="user-chip" class="user-chip" hidden>
           <img id="user-avatar" alt="" referrerpolicy="no-referrer" hidden />
+          <span id="user-initial" class="avatar-fallback" aria-hidden="true"></span>
           <span id="user-name"></span>
-          <button type="button" class="btn small" id="btn-logout">Đăng xuất</button>
+          <button type="button" class="btn small ghost" id="btn-logout">Đăng xuất</button>
         </div>
       </div>
     </header>
 
     <main id="login-view" class="wrap login" hidden>
+      <section class="hero">
+        <span class="eyebrow">Dự án mini · Quản lý lịch cá nhân</span>
+        <h1>Không bao giờ hẹn <span class="grad">hai việc cùng một giờ</span>.</h1>
+        <p class="lead">Ghi lịch hẹn trong vài giây. App tự phát hiện trùng giờ và gợi ý ngay khung giờ trống gần nhất.</p>
+        <ul class="features">
+          <li><span class="fi">⛔</span><div><b>Chặn trùng giờ</b><small>Kể cả trường hợp chồng một phần hoặc qua nửa đêm</small></div></li>
+          <li><span class="fi">💡</span><div><b>Gợi ý giờ trống</b><small>Bấm một lần là form tự điền</small></div></li>
+          <li><span class="fi">🗂️</span><div><b>Theo dõi theo ngày</b><small>Đánh dấu xong, hủy, khôi phục</small></div></li>
+        </ul>
+
+        <div class="preview" aria-hidden="true">
+          <div class="pv-item"><span class="pv-time">09:00</span><span>Họp nhóm đồ án</span></div>
+          <div class="pv-item pv-bad"><span class="pv-time">09:30</span><span>Gọi khách hàng</span><em>Trùng giờ</em></div>
+          <div class="pv-item pv-good"><span class="pv-time">10:00</span><span>Gọi khách hàng</span><em>Còn trống ✓</em></div>
+        </div>
+      </section>
+
       <section class="card login-card">
-        <h2>Đăng nhập</h2>
-        <p class="muted">Mỗi tài khoản có danh sách lịch hẹn riêng, lưu trên trình duyệt này.</p>
+        <h2>Bắt đầu</h2>
+        <p class="muted">Mỗi tài khoản có danh sách lịch hẹn riêng.</p>
         <div id="google-btn" class="google-btn"></div>
-        <p id="google-missing" class="muted small" hidden>
-          Chưa cấu hình Google Client ID (<code>src/config.js</code>) nên nút Google bị ẩn.
-        </p>
         <p id="login-error" class="error" role="alert"></p>
-        <div class="divider"><span>hoặc</span></div>
-        <button type="button" class="btn" id="btn-guest">Dùng thử không đăng nhập</button>
+        <div id="login-divider" class="divider"><span>hoặc</span></div>
+        <button type="button" class="btn primary" id="btn-guest">Dùng thử ngay, không cần đăng nhập</button>
+        <p class="muted small">Dữ liệu được lưu trên trình duyệt của bạn.</p>
       </section>
     </main>
 
     <main id="app-view" class="wrap layout" hidden>
-      <section class="card" aria-labelledby="form-heading">
-        <h2 id="form-heading">Tạo lịch hẹn</h2>
+      <section class="card form-card" aria-labelledby="form-heading">
+        <h2 id="form-heading"><span class="h-icon">＋</span>Tạo lịch hẹn</h2>
         <form id="appt-form" novalidate>
           <label class="field">
             <span>Tiêu đề <b aria-hidden="true">*</b></span>
@@ -80,8 +105,8 @@
 
       <section class="card" aria-labelledby="list-heading">
         <div class="list-head">
-          <h2 id="list-heading">Danh sách lịch hẹn</h2>
-          <p id="stats" class="stats"></p>
+          <h2 id="list-heading">Lịch hẹn của bạn</h2>
+          <div id="stats" class="stats"></div>
         </div>
 
         <div class="filters">
@@ -89,8 +114,10 @@
             <span>Xem ngày</span>
             <input id="filter-date" type="date" />
           </label>
-          <button type="button" class="btn ghost" id="btn-today">Hôm nay</button>
-          <button type="button" class="btn ghost" id="btn-all">Tất cả</button>
+          <div class="seg">
+            <button type="button" class="btn ghost" id="btn-today">Hôm nay</button>
+            <button type="button" class="btn ghost" id="btn-all">Tất cả</button>
+          </div>
           <label class="inline check">
             <input id="filter-cancelled" type="checkbox" checked />
             <span>Hiện lịch đã hủy</span>

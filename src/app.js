@@ -235,7 +235,11 @@ function render() {
   const upcoming = scheduled.filter((a) => toMs(a.end) > Date.now()).length;
   const done = appointments.filter((a) => a.status === STATUS.DONE).length;
   const cancelled = appointments.filter((a) => a.status === STATUS.CANCELLED).length;
-  $('#stats').textContent = `${upcoming} sắp tới · ${done} đã xong · ${cancelled} đã hủy`;
+  $('#stats').replaceChildren(
+    el('span', { className: 'chip up', textContent: `${upcoming} sắp tới` }),
+    el('span', { className: 'chip ok', textContent: `${done} đã xong` }),
+    el('span', { className: 'chip no', textContent: `${cancelled} đã hủy` }),
+  );
 
   const visible = appointments.filter(
     (a) =>
@@ -324,6 +328,8 @@ function showApp(nextUser) {
   const avatar = $('#user-avatar');
   avatar.hidden = !user.picture;
   if (user.picture) avatar.src = user.picture;
+  $('#user-initial').hidden = !!user.picture;
+  $('#user-initial').textContent = user.guest ? '?' : user.name.trim().charAt(0).toUpperCase();
   $('#user-chip').hidden = false;
   $('#login-view').hidden = true;
   $('#app-view').hidden = false;
@@ -356,8 +362,10 @@ if (GOOGLE_CLIENT_ID) {
     onError: (msg) => ($('#login-error').textContent = msg),
   });
 } else {
+  // Chưa có Client ID: chỉ hiện chế độ khách, không làm người dùng bối rối bằng thông báo cấu hình.
   $('#google-btn').hidden = true;
-  $('#google-missing').hidden = false;
+  $('#login-divider').hidden = true;
+  console.info('[Lịch Hẹn Mini] Chưa đặt GOOGLE_CLIENT_ID trong src/config.js → nút Đăng nhập Google bị ẩn.');
 }
 
 const session = loadSession();
