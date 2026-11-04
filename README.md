@@ -4,7 +4,7 @@ Website đặt và quản lý lịch hẹn cá nhân, **tự động chặn lị
 
 - 🔗 **Bản chạy thực tế:** `<dán link Vercel/Netlify>`
 - 🎬 **Video demo (1–2 phút):** `<dán link video>`, kịch bản ở [docs/DEMO_SCRIPT.md](docs/DEMO_SCRIPT.md)
-- 💻 **Repository:** `<dán link GitHub>`
+- 💻 **Repository:** https://github.com/trucquynh0709/kits
 
 ---
 
@@ -58,8 +58,8 @@ Hai lịch `[s1, e1)` và `[s2, e2)` trùng nhau **khi và chỉ khi** `s1 < e2 
 Yêu cầu: **Node.js ≥ 20**. Project **không có dependency**, không cần `npm install`.
 
 ```bash
-git clone <repo-url>
-cd lich-hen-mini
+git clone https://github.com/trucquynh0709/kits.git
+cd kits
 npm start          # mở http://localhost:5173
 npm test           # chạy 36 unit test
 ```
