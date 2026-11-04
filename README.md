@@ -5,7 +5,7 @@
 Website đặt và quản lý lịch hẹn cá nhân, **tự động chặn lịch trùng giờ và gợi ý khung giờ trống gần nhất**.
 
 - 🔗 **Bản chạy thực tế:** https://kits-opal.vercel.app
-- 📄 **Giới thiệu dự án** (mô tả, use case, thiết kế, kiểm thử, tự đánh giá): https://kits-opal.vercel.app/about.html. Trang này thay cho video demo theo yêu cầu của giảng viên.
+- 📄 **Trang chủ = trang giới thiệu dự án** (mô tả, cách hoạt động, use case, thiết kế, kiểm thử, phạm vi, tự đánh giá), đăng nhập ngay trên trang; đăng nhập xong vào thẳng ứng dụng. Trang này thay cho video demo theo yêu cầu của giảng viên.
 - 💻 **Repository:** https://github.com/trucquynh0709/kits
 
 ---
@@ -26,7 +26,7 @@ Người dùng ghi lịch hẹn rải rác ở giấy note, tin nhắn, ứng d�
 | Kiểm tra trùng giờ | ✅ Chặn trùng, liệt kê và highlight lịch bị trùng, **gợi ý giờ trống** | ảnh 02 |
 | Test case cho tạo lịch trùng | ✅ 13 unit test riêng cho tạo lịch trùng (tổng 52) + 37 e2e + 33 test thủ công | [docs/TEST_CASES.md](docs/TEST_CASES.md) |
 | README + log công việc | ✅ | file này, [docs/DAILY_LOG.md](docs/DAILY_LOG.md) |
-| Demo chức năng chính | ✅ Bản chạy thật + trang giới thiệu dự án + ảnh chụp | [about.html](about.html), [docs/screenshots/](docs/screenshots/) |
+| Demo chức năng chính | ✅ Bản chạy thật, trang chủ giới thiệu dự án, ảnh chụp | https://kits-opal.vercel.app, [docs/screenshots/](docs/screenshots/) |
 | Đăng nhập (khuyến nghị: social login) | ✅ **Đăng nhập Google**, mỗi tài khoản có dữ liệu riêng; có thêm chế độ khách | ảnh 00, [src/auth.js](src/auth.js) |
 | Deploy miễn phí | ✅ Vercel, tự deploy mỗi lần push `main`; bộ e2e 37 case chạy pass trên bản thật | https://kits-opal.vercel.app |
 
@@ -101,8 +101,7 @@ node scripts/e2e-smoke.js      # terminal 2. Dùng Chrome: đặt biến BROWSER
 
 ```
 lich-hen-mini/
-├── index.html              # ứng dụng
-├── about.html              # trang giới thiệu dự án (cho người chấm)
+├── index.html              # trang chủ (giới thiệu + đăng nhập) và ứng dụng
 ├── css/style.css
 ├── src/
 │   ├── scheduler.js        # ⭐ logic thuần: validate, trùng giờ, gợi ý, trạng thái

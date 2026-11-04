@@ -610,7 +610,6 @@ $('#cal-next').addEventListener('click', () => shiftMonth(1));
 
 const dayNum = String(now0.getDate()).padStart(2, '0');
 $('#logo-day').textContent = dayNum;
-$('#login-day').textContent = dayNum;
 
 $('#btn-clear-day').addEventListener('click', () => {
   filterDate.value = '';
@@ -673,14 +672,21 @@ function showApp(nextUser) {
   else $('#user-initial').textContent = user.name.trim().charAt(0).toUpperCase();
   $('#user-chip').hidden = false;
   $('#btn-new').hidden = false;
+  $('#btn-intro').hidden = false;
+  $('#nav-start').hidden = true;
   $('#login-view').hidden = true;
   $('#app-view').hidden = false;
   render();
 }
 
+// Trang chủ khi chưa đăng nhập là landing giới thiệu dự án, thẻ đăng nhập nằm ngay phần đầu.
 function showLogin() {
   user = null;
   appointments = [];
+  $('#login-options').hidden = false;
+  $('#continue-options').hidden = true;
+  $('#nav-start').hidden = false;
+  $('#btn-intro').hidden = true;
   $('#user-chip').hidden = true;
   $('#btn-new').hidden = true;
   closeForm();
@@ -691,6 +697,18 @@ function showLogin() {
 }
 
 $('#btn-guest').addEventListener('click', () => showApp(guestUser()));
+
+// Đang đăng nhập vẫn xem lại được landing; thẻ đăng nhập đổi thành "Vào ứng dụng".
+$('#btn-intro').addEventListener('click', () => {
+  $('#app-view').hidden = true;
+  $('#login-view').hidden = false;
+  $('#login-options').hidden = true;
+  $('#continue-options').hidden = false;
+  $('#btn-new').hidden = true;
+  $('#btn-intro').hidden = true;
+  scrollTo(0, 0);
+});
+$('#btn-continue').addEventListener('click', () => showApp(user));
 $('#btn-logout').addEventListener('click', () => {
   signOutGoogle();
   saveSession(null);

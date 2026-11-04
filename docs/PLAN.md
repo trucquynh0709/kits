@@ -40,7 +40,7 @@ Một website đặt lịch hẹn cá nhân, chạy end-to-end, **không cho t�
 | **5** | **Triển khai & bàn giao** | | | | |
 | 5.1 | Đẩy GitHub + CI chạy test | N6 | 0.5h | GitHub Actions xanh | ✅ |
 | 5.2 | Deploy Vercel/Netlify + khai báo domain trong Google Console | N6 | 0.5h | Có link công khai trong README; đăng nhập Google chạy trên link đó | ✅ https://kits-opal.vercel.app |
-| 5.3 | ~~Quay video demo 1–2 phút~~ → **Trang giới thiệu dự án** trong web (đổi theo yêu cầu GV) | N6 | 1h | `/about.html` có vấn đề, mục tiêu – kết quả, use case, thiết kế, kiểm thử, ngoài phạm vi, tự đánh giá | ✅ |
+| 5.3 | ~~Quay video demo 1–2 phút~~ → **Trang chủ giới thiệu dự án** (landing + đăng nhập, đổi theo yêu cầu GV) | N6 | 1h | Trang chủ có vấn đề, mục tiêu – kết quả, use case, thiết kế, kiểm thử, ngoài phạm vi, tự đánh giá | ✅ |
 | 5.4 | README, daily log, tự đánh giá | N7 | 1.5h | Đủ các mục theo tiêu chí chấm | ✅ |
 | 5.5 | Buffer: sửa lỗi phát sinh, rà soát | N7 | 2h | — | ☐ |
 
