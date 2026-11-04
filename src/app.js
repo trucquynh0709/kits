@@ -227,18 +227,52 @@ function actionButton(label, className, iconName, onClick) {
   return b;
 }
 
-function updateStatus(id, next, okMessage) {
+const conflictText = (r) =>
+  r.conflicts?.length ? ` (${r.conflicts.map((c) => `${formatRange(c)} ${c.title}`).join('; ')})` : '';
+
+// Đổi trạng thái; báo lỗi bằng toast, hoặc bằng onError khi gọi từ popup (toast bị popup che).
+function updateStatus(id, next, okMessage, { onError } = {}) {
   const r = changeStatus(appointments, id, next);
   if (!r.ok) {
     highlightIds = new Set((r.conflicts ?? []).map((c) => c.id));
     render();
-    const detail = r.conflicts?.length ? ` (${r.conflicts.map((c) => `${formatRange(c)} ${c.title}`).join('; ')})` : '';
-    toast(r.error + detail, true);
-    return;
+    if (onError) onError(r.error + conflictText(r));
+    else toast(r.error + conflictText(r), true);
+    return false;
   }
   highlightIds = new Set();
   persist(r.appointments);
   toast(okMessage);
+  return true;
+}
+
+function confirmDelete(a) {
+  if (!confirm(`Xóa vĩnh viễn "${a.title}"?`)) return false;
+  persist(deleteAppointment(appointments, a.id));
+  toast('Đã xóa lịch hẹn.');
+  return true;
+}
+
+// Các nút thao tác theo trạng thái, dùng chung cho dòng trong danh sách và popup chi tiết.
+function statusActions(a, opts = {}) {
+  const after = opts.after ?? (() => {});
+  const run = (next, msg) => () => updateStatus(a.id, next, msg, opts) && after();
+  const buttons =
+    a.status === STATUS.SCHEDULED
+      ? [
+          actionButton('Xong', 'done', 'check', run(STATUS.DONE, 'Đã đánh dấu hoàn thành.')),
+          actionButton('Hủy', 'danger', 'x', run(STATUS.CANCELLED, 'Đã hủy lịch hẹn, khung giờ được giải phóng.')),
+        ]
+      : [
+          actionButton(
+            a.status === STATUS.DONE ? 'Bỏ đánh dấu' : 'Khôi phục',
+            '',
+            'rotate-ccw',
+            run(STATUS.SCHEDULED, 'Đã khôi phục lịch hẹn.'),
+          ),
+        ];
+  buttons.push(actionButton('Xóa', 'danger', 'trash', () => confirmDelete(a) && opts.onDeleted?.()));
+  return buttons;
 }
 
 function renderItem(a) {
@@ -249,38 +283,118 @@ function renderItem(a) {
         ? el('span', { className: 'badge cancelled', textContent: 'Đã hủy' })
         : null;
 
-  const actions = el('div', { className: 'actions' });
-  if (a.status === STATUS.SCHEDULED) {
-    actions.append(
-      actionButton('Xong', 'done', 'check', () => updateStatus(a.id, STATUS.DONE, 'Đã đánh dấu hoàn thành.')),
-      actionButton('Hủy', 'danger', 'x', () => updateStatus(a.id, STATUS.CANCELLED, 'Đã hủy lịch hẹn, khung giờ được giải phóng.')),
-    );
-  } else {
-    const label = a.status === STATUS.DONE ? 'Bỏ đánh dấu' : 'Khôi phục';
-    actions.append(actionButton(label, '', 'rotate-ccw', () => updateStatus(a.id, STATUS.SCHEDULED, 'Đã khôi phục lịch hẹn.')));
-  }
-  actions.append(
-    actionButton('Xóa', 'danger', 'trash', () => {
-      if (confirm(`Xóa vĩnh viễn "${a.title}"?`)) {
-        persist(deleteAppointment(appointments, a.id));
-        toast('Đã xóa lịch hẹn.');
-      }
-    }),
+  const actions = el('div', { className: 'actions' }, ...statusActions(a));
+
+  // Vùng giờ + tiêu đề là một nút riêng để mở chi tiết, tách khỏi các nút thao tác bên phải.
+  const open = el(
+    'button',
+    { type: 'button', className: 'item-open', title: 'Xem chi tiết' },
+    el('span', { className: 'time', textContent: formatRange(a) }),
+    el(
+      'span',
+      { className: 'item-body' },
+      el('span', { className: 'title' }, a.title, badge),
+      a.note ? el('span', { className: 'note', textContent: a.note }) : null,
+    ),
   );
+  open.addEventListener('click', () => openDetail(a.id));
 
   return el(
     'article',
     { className: `item is-${a.status}${highlightIds.has(a.id) ? ' highlight' : ''}` },
-    el('div', { className: 'time', textContent: formatRange(a) }),
-    el(
-      'div',
-      {},
-      el('div', { className: 'title' }, a.title, badge),
-      a.note ? el('div', { className: 'note', textContent: a.note }) : null,
-    ),
+    open,
     actions,
   );
 }
+
+// ---------- popup chi tiết ----------
+const detailDialog = $('#detail-dialog');
+let detailId = null;
+
+function formatDuration(a) {
+  const min = Math.round((toMs(a.end) - toMs(a.start)) / 60000);
+  const h = Math.floor(min / 60);
+  const m = min % 60;
+  return [h ? `${h} giờ` : '', m ? `${m} phút` : ''].filter(Boolean).join(' ');
+}
+
+function statusInfo(a) {
+  if (a.status === STATUS.DONE) return { text: 'Đã xong', tone: 'ok' };
+  if (a.status === STATUS.CANCELLED) return { text: 'Đã hủy', tone: 'no' };
+  if (toMs(a.end) <= Date.now()) return { text: 'Đã qua, chưa đánh dấu xong', tone: 'past' };
+  if (toMs(a.start) <= Date.now()) return { text: 'Đang diễn ra', tone: 'up' };
+  return { text: 'Sắp tới', tone: 'up' };
+}
+
+function detailRow(iconName, main, sub) {
+  return el(
+    'li',
+    {},
+    el('span', { className: 'd-ic' }, icon(iconName, { size: 18 })),
+    el('span', { className: 'd-text' }, el('span', { textContent: main }), sub ? el('small', { textContent: sub }) : null),
+  );
+}
+
+function openDetail(id) {
+  detailId = id;
+  $('#detail-error').hidden = true;
+  renderDetail();
+  if (!detailDialog.open) detailDialog.showModal();
+}
+
+function renderDetail() {
+  const a = appointments.find((x) => x.id === detailId);
+  if (!a) {
+    if (detailDialog.open) detailDialog.close();
+    return;
+  }
+  const day = a.start.slice(0, 10);
+  const st = statusInfo(a);
+  $('#detail-status').textContent = st.text;
+  $('#detail-status').className = `status-pill ${st.tone}`;
+  $('#detail-title').textContent = a.title;
+  $('#detail-title').classList.toggle('struck', a.status !== STATUS.SCHEDULED);
+
+  const rows = [
+    detailRow('calendar-days', formatDay(day), relativeDay(day, todayStr())),
+    detailRow('clock', formatRange(a), formatDuration(a)),
+    detailRow('file-text', a.note || 'Không có ghi chú', a.note ? 'Ghi chú' : ''),
+  ];
+  if (a.createdAt) {
+    const c = fromMs(a.createdAt);
+    const meta = detailRow('history', `Tạo lúc ${hhmm(c)} ngày ${c.slice(8, 10)}/${c.slice(5, 7)}/${c.slice(0, 4)}`);
+    meta.classList.add('meta');
+    rows.push(meta);
+  }
+  $('#detail-rows').replaceChildren(...rows);
+
+  $('#detail-actions').replaceChildren(
+    ...statusActions(a, {
+      after: () => {
+        $('#detail-error').hidden = true;
+        renderDetail();
+      },
+      onError: (msg) => {
+        const box = $('#detail-error');
+        box.replaceChildren(el('strong', {}, icon('triangle-alert', { size: 16 }), msg));
+        box.hidden = false;
+      },
+      onDeleted: () => detailDialog.close(),
+    }),
+  );
+}
+
+detailDialog.addEventListener('click', (e) => {
+  if (e.target === detailDialog) detailDialog.close();
+});
+$('#detail-close').addEventListener('click', () => detailDialog.close());
+detailDialog.addEventListener('close', () => {
+  detailId = null;
+  if (highlightIds.size) {
+    highlightIds = new Set();
+    render();
+  }
+});
 
 function render() {
   const scheduled = appointments.filter((a) => a.status === STATUS.SCHEDULED);
@@ -537,6 +651,7 @@ function showLogin() {
   $('#user-chip').hidden = true;
   $('#btn-new').hidden = true;
   closeForm();
+  if (detailDialog.open) detailDialog.close();
   $('#app-view').hidden = true;
   $('#login-view').hidden = false;
   $('#login-error').textContent = '';

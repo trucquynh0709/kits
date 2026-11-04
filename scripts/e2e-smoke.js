@@ -203,6 +203,29 @@ await evaluate("document.querySelector('.chip[data-filter=upcoming]').click()");
 await evaluate("document.querySelector('.chip[data-filter=upcoming]').click()");
 check('E2E-24 bấm lại badge đang chọn → bỏ lọc', await evaluate("!document.querySelector('.chip.active') && document.querySelector('#btn-all').classList.contains('on')"));
 
+// Popup chi tiết
+await evaluate("document.querySelector('#btn-all').click()");
+check(
+  'E2E-26 bấm vào một lịch → popup chi tiết đúng tiêu đề, có ngày/giờ/thời lượng',
+  await evaluate(`(() => {
+    const item = document.querySelector('.item.is-scheduled');
+    const title = item.querySelector('.title').firstChild.textContent;
+    item.querySelector('.item-open').click();
+    const d = document.querySelector('#detail-dialog');
+    return d.open && document.querySelector('#detail-title').textContent === title &&
+      document.querySelectorAll('#detail-rows li').length >= 3 && /giờ|phút/.test(document.querySelector('#detail-rows').textContent);
+  })()`),
+);
+await shot('08-detail.png');
+await evaluate("document.querySelector('#detail-actions .btn.done').click()");
+check(
+  'E2E-27 bấm "Xong" trong popup → trạng thái cập nhật ngay, popup vẫn mở',
+  await evaluate("document.querySelector('#detail-dialog').open && document.querySelector('#detail-status').textContent === 'Đã xong'"),
+);
+await evaluate("document.querySelector('#detail-actions .btn').click()"); // Bỏ đánh dấu
+await evaluate("document.querySelector('#detail-close').click()");
+check('E2E-28 đóng popup chi tiết', await evaluate("!document.querySelector('#detail-dialog').open"));
+
 const before = await evaluate("document.querySelectorAll('#list .item').length");
 await evaluate("document.querySelector('#btn-logout').click()");
 check('E2E-15 đăng xuất → về màn hình đăng nhập, ẩn dữ liệu', await evaluate("!document.querySelector('#login-view').hidden && document.querySelector('#app-view').hidden"));

@@ -159,6 +159,17 @@
       </form>
     </dialog>
 
+    <dialog id="detail-dialog" class="modal detail" aria-labelledby="detail-title">
+      <div class="modal-head">
+        <span id="detail-status" class="status-pill"></span>
+        <button type="button" class="icon-btn" id="detail-close" aria-label="Đóng"><i data-icon="x"></i></button>
+      </div>
+      <h2 id="detail-title" class="detail-title" tabindex="-1" autofocus></h2>
+      <ul id="detail-rows" class="detail-rows"></ul>
+      <div id="detail-error" class="conflict" role="alert" hidden></div>
+      <div id="detail-actions" class="detail-actions"></div>
+    </dialog>
+
     <div id="toast" class="toast" role="status" hidden></div>
 
     <footer class="wrap footer">

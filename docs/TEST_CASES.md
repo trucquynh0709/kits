@@ -5,8 +5,8 @@ Có 3 lớp kiểm thử:
 | Lớp | Cách chạy | Kết quả |
 |---|---|---|
 | Unit test (`tests/scheduler.test.js`, `auth.test.js`, `calendar.test.js`) | `npm test` | **52/52 pass** |
-| E2E smoke test trên trình duyệt thật (tự động hoá phần lớn bảng A) | `npm start` rồi `node scripts/e2e-smoke.js` | **27/27 pass** |
-| Test thủ công (bảng dưới) | Theo các bước trong bảng | **27/30 pass**, 3 case chờ test với Google Client ID thật |
+| E2E smoke test trên trình duyệt thật (tự động hoá phần lớn bảng A) | `npm start` rồi `node scripts/e2e-smoke.js` | **30/30 pass** |
+| Test thủ công (bảng dưới) | Theo các bước trong bảng | **28/31 pass**, 3 case chờ test với Google Client ID thật |
 
 ## A. Test thủ công
 
@@ -52,6 +52,7 @@ Có 3 lớp kiểm thử:
 | TC-T28 | Mở popup, nhấn Esc / bấm vùng tối bên ngoài | Popup đóng, không tạo lịch | ✅ Pass |
 | TC-T29 | Bấm badge "1 đã xong", rồi bấm lại | Lần 1: chỉ còn lịch đã xong, badge tô đậm; lần 2: hiện lại tất cả | ✅ Pass |
 | TC-T30 | Có lịch đã xong ở 3 ngày khác nhau (hôm qua, 3 ngày trước, 6 ngày trước), bấm badge "đã xong" | Nhóm theo từng ngày, **hôm qua lên đầu**, mỗi nhóm có nhãn "Hôm qua"/"3 ngày trước" và số lịch | ✅ Pass |
+| TC-T31 | Bấm vào một lịch đã hủy mà khung giờ đã bị lịch khác chiếm → bấm "Khôi phục" trong popup | Popup vẫn mở, hiện hộp cảnh báo nêu lịch đang chiếm giờ; trạng thái vẫn là "Đã hủy" | ✅ Pass |
 
 ### A4. Đăng nhập
 
