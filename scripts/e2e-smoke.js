@@ -64,6 +64,9 @@ await send('Page.navigate', { url: APP });
 await sleep(800);
 await evaluate('localStorage.clear(); location.reload()');
 await sleep(800);
+await shot('00-login.png');
+// Headless không đăng nhập Google được, nên test luồng chính bằng chế độ khách
+await evaluate("document.querySelector('#btn-guest').click()");
 
 // Tạo lịch theo ngày mai để không bị chặn "quá khứ"
 const fill = (title, start, end, note = '') => `
@@ -80,6 +83,7 @@ const results = [];
 const check = (name, cond) => {
   results.push(`${cond ? 'PASS' : 'FAIL'}  ${name}`);
 };
+check('E2E-0 vào app ở chế độ khách', await evaluate("!document.querySelector('#app-view').hidden && document.querySelector('#login-view').hidden"));
 
 await evaluate(fill('', '09:00', '10:00'));
 check('E2E-1 bỏ trống tiêu đề → hiện lỗi', (await evaluate("document.querySelector('[data-for=title]').textContent")) !== '');
@@ -146,6 +150,13 @@ check(
   'E2E-14 khôi phục lịch hủy khi giờ đã bị chiếm → bị chặn',
   (await evaluate(`${titleSel('Ăn trưa với Lan')}.classList.contains('is-cancelled') && document.querySelector('#toast').classList.contains('error')`)),
 );
+
+const before = await evaluate("document.querySelectorAll('#list .item').length");
+await evaluate("document.querySelector('#btn-logout').click()");
+check('E2E-15 đăng xuất → về màn hình đăng nhập, ẩn dữ liệu', await evaluate("!document.querySelector('#login-view').hidden && document.querySelector('#app-view').hidden"));
+await evaluate("document.querySelector('#btn-guest').click()");
+await evaluate("document.querySelector('#btn-all').click()");
+check('E2E-16 vào lại cùng tài khoản → dữ liệu còn', (await count()) >= before);
 
 // Màn hình điện thoại
 await send('Emulation.setDeviceMetricsOverride', { width: 390, height: 1200, deviceScaleFactor: 1, mobile: true });

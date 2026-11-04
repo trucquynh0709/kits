@@ -10,6 +10,8 @@ import {
   groupByDate,
 } from './scheduler.js';
 import { loadAppointments, saveAppointments } from './storage.js';
+import { guestUser, loadSession, saveSession, renderGoogleButton, signOutGoogle } from './auth.js';
+import { GOOGLE_CLIENT_ID } from './config.js';
 
 const $ = (sel) => document.querySelector(sel);
 const form = $('#appt-form');
@@ -25,7 +27,8 @@ const listEl = $('#list');
 const filterDate = $('#filter-date');
 const filterCancelled = $('#filter-cancelled');
 
-let appointments = loadAppointments();
+let user = null;
+let appointments = [];
 let highlightIds = new Set();
 
 // ---------- tiện ích hiển thị ----------
@@ -68,7 +71,7 @@ function toast(message, isError = false) {
 
 function persist(next) {
   appointments = next;
-  if (!saveAppointments(appointments)) toast('Không lưu được vào trình duyệt (bộ nhớ đầy hoặc bị chặn).', true);
+  if (!saveAppointments(user.id, appointments)) toast('Không lưu được vào trình duyệt (bộ nhớ đầy hoặc bị chặn).', true);
   render();
 }
 
@@ -303,5 +306,60 @@ $('#btn-seed').addEventListener('click', () => {
   toast(added ? `Đã thêm ${added} lịch mẫu vào ngày mai.` : 'Lịch mẫu đã có sẵn (trùng giờ nên không thêm lại).');
 });
 
-setDefaultTimes();
-render();
+// ---------- đăng nhập ----------
+function showApp(nextUser) {
+  user = nextUser;
+  saveSession(user);
+  appointments = loadAppointments(user.id);
+  highlightIds = new Set();
+  form.reset();
+  showErrors();
+  showConflicts();
+  updateNoteCount();
+  setDefaultTimes();
+  filterDate.value = '';
+
+  $('#user-name').textContent = user.guest ? 'Khách (chưa đăng nhập)' : user.name;
+  $('#user-name').title = user.email;
+  const avatar = $('#user-avatar');
+  avatar.hidden = !user.picture;
+  if (user.picture) avatar.src = user.picture;
+  $('#user-chip').hidden = false;
+  $('#login-view').hidden = true;
+  $('#app-view').hidden = false;
+  render();
+}
+
+function showLogin() {
+  user = null;
+  appointments = [];
+  $('#user-chip').hidden = true;
+  $('#app-view').hidden = true;
+  $('#login-view').hidden = false;
+  $('#login-error').textContent = '';
+}
+
+$('#btn-guest').addEventListener('click', () => showApp(guestUser()));
+$('#btn-logout').addEventListener('click', () => {
+  signOutGoogle();
+  saveSession(null);
+  showLogin();
+});
+
+if (GOOGLE_CLIENT_ID) {
+  renderGoogleButton($('#google-btn'), {
+    clientId: GOOGLE_CLIENT_ID,
+    onLogin: (u) => {
+      showApp(u);
+      toast(`Xin chào ${u.name}!`);
+    },
+    onError: (msg) => ($('#login-error').textContent = msg),
+  });
+} else {
+  $('#google-btn').hidden = true;
+  $('#google-missing').hidden = false;
+}
+
+const session = loadSession();
+if (session) showApp(session);
+else showLogin();

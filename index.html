@@ -10,13 +10,34 @@
   </head>
   <body>
     <header class="topbar">
-      <div class="wrap">
-        <h1>📅 Lịch Hẹn Mini</h1>
-        <p class="tagline">Đặt lịch nhanh, không lo trùng giờ.</p>
+      <div class="wrap topbar-inner">
+        <div>
+          <h1>📅 Lịch Hẹn Mini</h1>
+          <p class="tagline">Đặt lịch nhanh, không lo trùng giờ.</p>
+        </div>
+        <div id="user-chip" class="user-chip" hidden>
+          <img id="user-avatar" alt="" referrerpolicy="no-referrer" hidden />
+          <span id="user-name"></span>
+          <button type="button" class="btn small" id="btn-logout">Đăng xuất</button>
+        </div>
       </div>
     </header>
 
-    <main class="wrap layout">
+    <main id="login-view" class="wrap login" hidden>
+      <section class="card login-card">
+        <h2>Đăng nhập</h2>
+        <p class="muted">Mỗi tài khoản có danh sách lịch hẹn riêng, lưu trên trình duyệt này.</p>
+        <div id="google-btn" class="google-btn"></div>
+        <p id="google-missing" class="muted small" hidden>
+          Chưa cấu hình Google Client ID (<code>src/config.js</code>) nên nút Google bị ẩn.
+        </p>
+        <p id="login-error" class="error" role="alert"></p>
+        <div class="divider"><span>hoặc</span></div>
+        <button type="button" class="btn" id="btn-guest">Dùng thử không đăng nhập</button>
+      </section>
+    </main>
+
+    <main id="app-view" class="wrap layout" hidden>
       <section class="card" aria-labelledby="form-heading">
         <h2 id="form-heading">Tạo lịch hẹn</h2>
         <form id="appt-form" novalidate>
