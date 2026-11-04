@@ -4,9 +4,9 @@ Có 3 lớp kiểm thử:
 
 | Lớp | Cách chạy | Kết quả |
 |---|---|---|
-| Unit test (`tests/scheduler.test.js`, `auth.test.js`, `calendar.test.js`) | `npm test` | **50/50 pass** |
-| E2E smoke test trên trình duyệt thật (tự động hoá phần lớn bảng A) | `npm start` rồi `node scripts/e2e-smoke.js` | **26/26 pass** |
-| Test thủ công (bảng dưới) | Theo các bước trong bảng | **26/29 pass**, 3 case chờ test với Google Client ID thật |
+| Unit test (`tests/scheduler.test.js`, `auth.test.js`, `calendar.test.js`) | `npm test` | **52/52 pass** |
+| E2E smoke test trên trình duyệt thật (tự động hoá phần lớn bảng A) | `npm start` rồi `node scripts/e2e-smoke.js` | **27/27 pass** |
+| Test thủ công (bảng dưới) | Theo các bước trong bảng | **27/30 pass**, 3 case chờ test với Google Client ID thật |
 
 ## A. Test thủ công
 
@@ -51,6 +51,7 @@ Có 3 lớp kiểm thử:
 | TC-T27 | Bấm một ngày đã qua | Nút "Thêm lịch vào ngày này" bị tắt, ghi "Ngày đã qua" | ✅ Pass |
 | TC-T28 | Mở popup, nhấn Esc / bấm vùng tối bên ngoài | Popup đóng, không tạo lịch | ✅ Pass |
 | TC-T29 | Bấm badge "1 đã xong", rồi bấm lại | Lần 1: chỉ còn lịch đã xong, badge tô đậm; lần 2: hiện lại tất cả | ✅ Pass |
+| TC-T30 | Có lịch đã xong ở 3 ngày khác nhau (hôm qua, 3 ngày trước, 6 ngày trước), bấm badge "đã xong" | Nhóm theo từng ngày, **hôm qua lên đầu**, mỗi nhóm có nhãn "Hôm qua"/"3 ngày trước" và số lịch | ✅ Pass |
 
 ### A4. Đăng nhập
 
@@ -87,14 +88,14 @@ Các test còn lại: gợi ý giờ trống (TC-14, 15), validation (TC-16 → 
 
 Đăng nhập (`tests/auth.test.js`): AU-01 token hợp lệ, giữ tên tiếng Việt có dấu · AU-02 token hết hạn · AU-03 sai `aud` · AU-04 sai `iss` · AU-05 token rác · AU-06 thiếu tên thì dùng email · AU-07 hai tài khoản tách dữ liệu · AU-08 chuyển dữ liệu bản cũ sang tài khoản khách · AU-09 dữ liệu hỏng không làm sập app.
 
-Lịch tháng (`tests/calendar.test.js`): CA-01 tháng bắt đầu Chủ Nhật · CA-02 tháng bắt đầu Thứ Hai · CA-03 tháng 2 năm nhuận · CA-04 tháng 12 sang năm mới · CA-05 đếm lịch theo ngày, bỏ qua lịch hủy.
+Lịch tháng (`tests/calendar.test.js`): CA-01 tháng bắt đầu Chủ Nhật · CA-02 tháng bắt đầu Thứ Hai · CA-03 tháng 2 năm nhuận · CA-04 tháng 12 sang năm mới · CA-05 đếm lịch theo ngày, bỏ qua lịch hủy · CA-06 nhãn ngày tương đối qua tháng/năm. Thêm TC-37: `newestFirst` xếp ngày mới nhất lên đầu.
 
 Kết quả chạy:
 
 ```
 $ npm test
-# tests 50
+# tests 52
 # suites 8
-# pass 50
+# pass 52
 # fail 0
 ```

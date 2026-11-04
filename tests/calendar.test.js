@@ -1,6 +1,6 @@
 import { test, describe } from 'node:test';
 import assert from 'node:assert/strict';
-import { monthGrid, countByDate } from '../src/calendar.js';
+import { monthGrid, countByDate, relativeDay } from '../src/calendar.js';
 
 describe('Lịch tháng', () => {
   test('CA-01 tháng 11/2026 (bắt đầu Chủ Nhật) → ô đầu là Thứ Hai 26/10', () => {
@@ -22,6 +22,15 @@ describe('Lịch tháng', () => {
 
   test('CA-04 tháng 12 → các ô cuối thuộc tháng 1 năm sau', () => {
     assert.equal(monthGrid(2026, 11).at(-1).date, '2027-01-10');
+  });
+
+  test('CA-06 nhãn ngày tương đối, kể cả qua tháng / năm', () => {
+    const today = '2026-12-30';
+    assert.equal(relativeDay('2026-12-30', today), 'Hôm nay');
+    assert.equal(relativeDay('2026-12-31', today), 'Ngày mai');
+    assert.equal(relativeDay('2026-12-29', today), 'Hôm qua');
+    assert.equal(relativeDay('2027-01-02', today), 'Còn 3 ngày');
+    assert.equal(relativeDay('2026-11-30', today), '30 ngày trước');
   });
 
   test('CA-05 đếm lịch theo ngày, bỏ qua lịch đã hủy', () => {

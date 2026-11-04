@@ -191,6 +191,15 @@ check('E2E-21 bấm badge "đã xong" → chỉ hiện lịch đã xong, đúng 
 check('E2E-22 bấm badge "đã hủy" → chỉ hiện lịch đã hủy, đúng số lượng', await evaluate(chipCheck('cancelled', 'is-cancelled')));
 check('E2E-23 bấm badge "sắp tới" → chỉ hiện lịch chưa diễn ra', await evaluate(chipCheck('upcoming', 'is-scheduled')));
 await shot('06-chip-filter.png');
+check(
+  'E2E-25 bấm tiêu đề nhóm ngày → chọn đúng ngày đó trên lịch, bỏ lọc badge',
+  await evaluate(`(() => {
+    document.querySelector('.day-link').click();
+    const d = document.querySelector('#filter-date').value;
+    return !!d && document.querySelector('.cal-day.selected')?.dataset.date === d && !document.querySelector('.chip.active');
+  })()`),
+);
+await evaluate("document.querySelector('.chip[data-filter=upcoming]').click()");
 await evaluate("document.querySelector('.chip[data-filter=upcoming]').click()");
 check('E2E-24 bấm lại badge đang chọn → bỏ lọc', await evaluate("!document.querySelector('.chip.active') && document.querySelector('#btn-all').classList.contains('on')"));
 

@@ -22,7 +22,7 @@ Người dùng ghi lịch hẹn rải rác ở giấy note, tin nhắn, ứng d�
 | Danh sách lịch hẹn theo ngày | ✅ Nhóm theo ngày, lọc theo ngày, nhãn "Hôm nay", ẩn/hiện lịch hủy | ảnh 03 |
 | Đánh dấu đã xong / hủy | ✅ Thêm Khôi phục, Bỏ đánh dấu, Xóa | ảnh 03 |
 | Kiểm tra trùng giờ | ✅ Chặn trùng, liệt kê và highlight lịch bị trùng, **gợi ý giờ trống** | ảnh 02 |
-| Test case cho tạo lịch trùng | ✅ 13 unit test riêng cho tạo lịch trùng (tổng 50) + 26 e2e + 29 test thủ công | [docs/TEST_CASES.md](docs/TEST_CASES.md) |
+| Test case cho tạo lịch trùng | ✅ 13 unit test riêng cho tạo lịch trùng (tổng 52) + 27 e2e + 30 test thủ công | [docs/TEST_CASES.md](docs/TEST_CASES.md) |
 | README + log công việc | ✅ | file này, [docs/DAILY_LOG.md](docs/DAILY_LOG.md) |
 | Demo chức năng chính | ✅ Ảnh chụp bên dưới + video | [docs/screenshots/](docs/screenshots/) |
 | Đăng nhập (khuyến nghị: social login) | ✅ **Đăng nhập Google**, mỗi tài khoản có dữ liệu riêng; có thêm chế độ khách | ảnh 00, [src/auth.js](src/auth.js) |
@@ -37,6 +37,8 @@ Người dùng ghi lịch hẹn rải rác ở giấy note, tin nhắn, ứng d�
 | ![Validation](docs/screenshots/01-validation.png) | ![Mobile](docs/screenshots/04-mobile.png) |
 | **Đăng nhập** | **Thêm lịch vào ngày đã chọn** |
 | ![Đăng nhập](docs/screenshots/00-login.png) | ![Thêm lịch](docs/screenshots/05-add-day.png) |
+| **Lọc "đã xong" trên nhiều ngày** | |
+| ![Lịch sử nhiều ngày](docs/screenshots/07-history-multi-day.png) | |
 
 ## 4. Chức năng
 
@@ -49,7 +51,7 @@ Người dùng ghi lịch hẹn rải rác ở giấy note, tin nhắn, ứng d�
    - Lịch đã hủy hoặc đã xong **không chiếm giờ**.
    - Khi **khôi phục** một lịch đã hủy, app kiểm tra trùng lại.
 4. **Gợi ý giờ trống gần nhất** có cùng độ dài, bấm một lần là form tự điền.
-5. **Danh sách theo ngày:** sắp theo ngày và giờ, lọc theo một ngày cụ thể. Badge thống kê **sắp tới / đã xong / đã hủy** bấm được: bấm để xem đúng các lịch đó, bấm lại để bỏ lọc.
+5. **Danh sách theo ngày:** sắp theo ngày và giờ, lọc theo một ngày cụ thể. Badge thống kê **sắp tới / đã xong / đã hủy** bấm được: bấm để xem đúng các lịch đó trên tất cả các ngày, bấm lại để bỏ lọc. Mỗi nhóm ngày có nhãn tương đối (*Ngày mai*, *Còn 3 ngày*, *6 ngày trước*) và số lịch; lịch sử (đã xong / đã hủy) xếp **mới nhất lên đầu**. Bấm tiêu đề ngày để nhảy tới ngày đó trên lịch.
 6. **Trạng thái:** Xong, Hủy, Khôi phục, Bỏ đánh dấu, Xóa (có xác nhận).
 7. **Lịch tháng** kiểu date picker: ngày có hẹn được đánh dấu chấm. Bấm một ngày để lọc danh sách; khung bên dưới có nút **"Thêm lịch vào ngày này"** (tự tắt với ngày đã qua).
 8. Lưu tự động vào localStorage; giao diện sáng tông be/cam, responsive trên điện thoại.
@@ -66,7 +68,7 @@ Yêu cầu: **Node.js ≥ 20**. Project **không có dependency**, không cần 
 git clone https://github.com/trucquynh0709/kits.git
 cd kits
 npm start          # mở http://localhost:5173
-npm test           # chạy 50 unit test
+npm test           # chạy 52 unit test
 ```
 
 **Bật đăng nhập Google** (khoảng 5 phút; chưa bật thì app vẫn chạy ở chế độ khách):
@@ -170,7 +172,7 @@ Những mục dưới đây **cố ý không làm** để luồng chính chạy 
 - Xử lý được một **case khó** dễ bỏ sót: khôi phục lịch đã hủy khi khung giờ đã bị chiếm (TC-30, E2E-14).
 - Có thêm **gợi ý giờ trống**, nên app không chỉ báo lỗi mà còn giúp người dùng đặt được lịch.
 - Có social login mà vẫn giữ được kiến trúc không backend, và dữ liệu cũ được chuyển sang tài khoản khách tự động.
-- 3 lớp kiểm thử (50 unit, 26 e2e, 29 test thủ công, trong đó 3 case Google chờ test với Client ID thật), có CI. Project 0 dependency nên ai clone về cũng chạy được ngay.
+- 3 lớp kiểm thử (52 unit, 27 e2e, 30 test thủ công, trong đó 3 case Google chờ test với Client ID thật), có CI. Project 0 dependency nên ai clone về cũng chạy được ngay.
 - Phạm vi được quản lý chủ động: phần cắt đều có lý do, rủi ro được ghi lại.
 
 **Điểm yếu**

@@ -391,7 +391,26 @@ textarea { resize: vertical; }
 .day { margin-bottom: 22px; }
 .day h3 { font-size: 0.8rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.05em; color: var(--muted); margin: 0 0 10px; display: flex; gap: 8px; align-items: center; }
 .day h3::after { content: ''; flex: 1; border-top: 1.5px dashed var(--border); }
-.tag { font-size: 0.7rem; letter-spacing: 0; text-transform: none; color: var(--accent-ink); background: var(--accent); padding: 2px 9px; border-radius: 99px; }
+.day-link {
+  font: inherit;
+  color: inherit;
+  text-transform: inherit;
+  letter-spacing: inherit;
+  background: none;
+  border: none;
+  padding: 2px 0;
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  cursor: pointer;
+  border-radius: 8px;
+}
+.day-link:hover > span:first-child { color: var(--accent-deep); text-decoration: underline; text-underline-offset: 3px; }
+.day-link:focus-visible { outline: 3px solid rgb(246 166 35 / 0.45); outline-offset: 2px; }
+.tag { font-size: 0.7rem; letter-spacing: 0; text-transform: none; color: var(--accent-deep); background: var(--accent-soft); padding: 2px 9px; border-radius: 99px; }
+.tag.now { color: var(--accent-ink); background: var(--accent); }
+.tag.past { color: var(--muted); background: var(--surface); }
+.day h3 .count { font-size: 0.72rem; letter-spacing: 0; text-transform: none; font-weight: 600; color: var(--faint); }
 
 .item {
   display: grid;

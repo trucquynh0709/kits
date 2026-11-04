@@ -152,8 +152,9 @@ export function deleteAppointment(appointments, id) {
   return appointments.filter((a) => a.id !== id);
 }
 
-// Nhóm theo ngày bắt đầu, ngày tăng dần, trong ngày sắp theo giờ bắt đầu.
-export function groupByDate(appointments) {
+// Nhóm theo ngày bắt đầu, trong ngày sắp theo giờ bắt đầu. Mặc định ngày tăng dần (lịch sắp tới);
+// newestFirst đảo thứ tự ngày cho danh sách lịch sử (đã xong / đã hủy), giờ trong ngày vẫn tăng dần.
+export function groupByDate(appointments, { newestFirst = false } = {}) {
   const groups = new Map();
   const sorted = [...appointments].sort((a, b) => toMs(a.start) - toMs(b.start));
   for (const a of sorted) {
@@ -161,5 +162,6 @@ export function groupByDate(appointments) {
     if (!groups.has(day)) groups.set(day, []);
     groups.get(day).push(a);
   }
-  return [...groups.entries()].map(([date, items]) => ({ date, items }));
+  const result = [...groups.entries()].map(([date, items]) => ({ date, items }));
+  return newestFirst ? result.reverse() : result;
 }

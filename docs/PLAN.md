@@ -30,8 +30,9 @@ Một website đặt lịch hẹn cá nhân, chạy end-to-end, **không cho t�
 | 3.6 | Đăng nhập Google + chế độ khách *(thêm lại sau khi xem lại R1)* | N5 | 3h | Đăng nhập/đăng xuất được; mỗi tài khoản thấy dữ liệu riêng; token hết hạn/sai app bị từ chối; có unit test | ✅ (luồng Google chờ test với Client ID thật) |
 | **4** | **Kiểm thử** | | | | |
 | 3.9 | Badge thống kê bấm được để lọc theo trạng thái | N5 | 0.5h | Bấm badge → danh sách chỉ còn đúng các lịch được đếm; bấm lại → bỏ lọc | ✅ |
-| 4.1 | Unit test logic | N2–N3, N5 | (trong 2.x, 3.6) | `npm test` pass 50/50 | ✅ |
-| 4.2 | E2E smoke test trên trình duyệt | N5 | 1.5h | `node scripts/e2e-smoke.js` pass 26/26, tự chụp ảnh màn hình | ✅ |
+| 3.10 | Danh sách nhiều ngày: nhãn ngày tương đối + số lịch, lịch sử mới nhất trước, bấm tiêu đề ngày để chọn ngày | N5 | 1h | Lọc "đã xong" trên 3 ngày khác nhau hiện đúng thứ tự mới → cũ; có unit test | ✅ |
+| 4.1 | Unit test logic | N2–N3, N5 | (trong 2.x, 3.6) | `npm test` pass 52/52 | ✅ |
+| 4.2 | E2E smoke test trên trình duyệt | N5 | 1.5h | `node scripts/e2e-smoke.js` pass 27/27, tự chụp ảnh màn hình | ✅ |
 | 4.3 | Test thủ công theo TEST_CASES.md | N5 | 1h | Mọi case có kết quả Pass/Fail | ✅ |
 | **5** | **Triển khai & bàn giao** | | | | |
 | 5.1 | Đẩy GitHub + CI chạy test | N6 | 0.5h | Badge/Actions xanh | ☐ |

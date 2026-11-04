@@ -184,6 +184,17 @@ describe('Danh sách theo ngày', () => {
     assert.deepEqual(g[0].items.map((x) => x.id), ['a', 'b']);
   });
 
+  test('TC-37 newestFirst: ngày mới nhất lên đầu, giờ trong ngày vẫn tăng dần (cho danh sách đã xong)', () => {
+    const list = [
+      appt('a', '2026-11-01T09:00', '2026-11-01T10:00', STATUS.DONE),
+      appt('c', '2026-11-03T14:00', '2026-11-03T15:00', STATUS.DONE),
+      appt('b', '2026-11-03T08:00', '2026-11-03T09:00', STATUS.DONE),
+    ];
+    const g = groupByDate(list, { newestFirst: true });
+    assert.deepEqual(g.map((x) => x.date), ['2026-11-03', '2026-11-01']);
+    assert.deepEqual(g[0].items.map((x) => x.id), ['b', 'c']);
+  });
+
   test('TC-35 xóa lịch', () => {
     assert.deepEqual(deleteAppointment(existing, 'A'), []);
   });

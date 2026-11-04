@@ -13,7 +13,7 @@ import {
 import { loadAppointments, saveAppointments } from './storage.js';
 import { guestUser, loadSession, saveSession, renderGoogleButton, signOutGoogle } from './auth.js';
 import { GOOGLE_CLIENT_ID } from './config.js';
-import { monthGrid, countByDate } from './calendar.js';
+import { monthGrid, countByDate, relativeDay } from './calendar.js';
 import { icon, hydrateIcons } from './icons.js';
 
 hydrateIcons();
@@ -309,7 +309,8 @@ function render() {
         (!filterDate.value || a.start.startsWith(filterDate.value)),
   );
 
-  const groups = groupByDate(visible);
+  // Lịch sử (đã xong / đã hủy) xem mới nhất trước; còn lại xem theo thời gian tới.
+  const groups = groupByDate(visible, { newestFirst: statusFilter === 'done' || statusFilter === 'cancelled' });
   const today = todayStr();
   if (groups.length === 0) {
     const msg = statusFilter
@@ -333,12 +334,7 @@ function render() {
       el(
         'section',
         { className: 'day' },
-        el(
-          'h3',
-          {},
-          formatDay(date),
-          date === today ? el('span', { className: 'tag', textContent: 'Hôm nay' }) : null,
-        ),
+        dayHeading(date, items.length, today),
         ...items.map(renderItem),
       ),
     ),
@@ -372,6 +368,24 @@ function statChip(key, tone, n) {
     render();
   });
   return b;
+}
+
+// Tiêu đề nhóm ngày: bấm để chọn ngày đó trên lịch (tiện khi danh sách trải dài nhiều ngày).
+function dayHeading(date, n, today) {
+  const rel = relativeDay(date, today);
+  const btn = el(
+    'button',
+    { type: 'button', className: 'day-link', title: 'Xem ngày này trên lịch' },
+    el('span', { textContent: formatDay(date) }),
+    el('span', { className: `tag${date === today ? ' now' : date < today ? ' past' : ''}`, textContent: rel }),
+    el('span', { className: 'count', textContent: `${n} lịch` }),
+  );
+  btn.addEventListener('click', () => {
+    statusFilter = null;
+    filterDate.value = date;
+    render();
+  });
+  return el('h3', {}, btn);
 }
 
 // ---------- lịch tháng ----------
