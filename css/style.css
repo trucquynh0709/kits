@@ -118,7 +118,7 @@ body {
 .features li { display: flex; gap: 14px; align-items: center; }
 .features b { display: block; font-weight: 700; }
 .features small { color: #7d7663; }
-.fi { flex: none; width: 44px; height: 44px; border-radius: 14px; display: grid; place-items: center; background: var(--card); box-shadow: var(--shadow); font-size: 1.1rem; }
+.fi { flex: none; width: 44px; height: 44px; border-radius: 14px; display: grid; place-items: center; background: var(--card); box-shadow: var(--shadow); color: var(--accent-deep); }
 
 .login-card { text-align: center; padding: 40px 32px 32px; }
 .login-card h2 { font-size: 1.6rem; margin: 0 0 4px; justify-content: center; }
@@ -165,9 +165,8 @@ body {
   border: none;
   background: transparent;
   color: var(--text);
-  font: inherit;
-  font-size: 1.3rem;
-  line-height: 1;
+  display: grid;
+  place-items: center;
   cursor: pointer;
 }
 .icon-btn:hover { background: var(--surface); }
@@ -237,7 +236,13 @@ textarea { resize: vertical; }
 .hint { color: var(--muted); font-size: 0.74rem; text-align: right; font-weight: 500; }
 
 /* ---------- buttons ---------- */
+.ic { flex: none; display: block; }
+
 .btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
   font: inherit;
   font-weight: 600;
   border: 1.5px solid var(--border);
@@ -253,7 +258,8 @@ textarea { resize: vertical; }
 .btn:active { transform: translateY(1px); }
 .btn:focus-visible { outline: 3px solid rgb(246 166 35 / 0.45); outline-offset: 2px; }
 .btn.primary {
-  display: block;
+  display: flex;
+  gap: 8px;
   width: 100%;
   padding: 14px;
   font-size: 0.98rem;
@@ -267,7 +273,7 @@ textarea { resize: vertical; }
 }
 .btn.primary:hover { background: var(--accent-deep); }
 .btn.ghost { background: transparent; }
-.btn.link { background: none; border: none; color: var(--accent-deep); padding: 12px 0 0; font-size: 0.85rem; }
+.btn.link { background: none; border: none; color: var(--accent-deep); padding: 12px 0 0; font-size: 0.85rem; gap: 4px; }
 .btn.link:hover { text-decoration: underline; }
 .btn.small { padding: 5px 12px; font-size: 0.8rem; border-radius: 10px; }
 .btn.done { color: var(--done); }
@@ -282,7 +288,7 @@ textarea { resize: vertical; }
 
 /* ---------- conflict ---------- */
 .conflict { background: var(--warn-bg); border: 1.5px solid var(--warn-border); border-radius: 16px; padding: 14px 16px; margin-bottom: 14px; font-size: 0.86rem; }
-.conflict strong { color: #b26a00; }
+.conflict strong { color: #b26a00; display: flex; align-items: center; gap: 6px; }
 .conflict ul { margin: 6px 0 10px; padding-left: 18px; }
 .conflict .btn { background: var(--card); border-color: var(--warn-border); }
 
@@ -338,8 +344,9 @@ textarea { resize: vertical; }
 .badge.done { background: var(--done-bg); color: var(--done); }
 .badge.cancelled { background: var(--cancel-bg); color: var(--cancel); }
 
-.empty { color: var(--muted); text-align: center; padding: 44px 16px; border-radius: 20px; background: var(--surface); margin: 0; font-weight: 500; }
-.empty::before { content: '🗓️'; display: block; font-size: 2.2rem; margin-bottom: 8px; }
+.empty { color: var(--muted); text-align: center; padding: 40px 16px; border-radius: 20px; background: var(--surface); font-weight: 500; display: flex; flex-direction: column; align-items: center; gap: 10px; }
+.empty .ic { color: var(--accent); }
+.empty p { margin: 0; }
 
 /* ---------- toast ---------- */
 .toast {
@@ -357,7 +364,12 @@ textarea { resize: vertical; }
   box-shadow: 0 12px 30px rgb(0 0 0 / 0.2);
   animation: toast-in 0.2s ease-out;
   z-index: 20;
+  display: flex;
+  align-items: center;
+  gap: 10px;
 }
+.toast .ic { color: var(--accent); }
+.toast.error .ic { color: #fff; }
 .toast.error { background: var(--cancel); }
 @keyframes toast-in { from { opacity: 0; transform: translate(-50%, 8px); } }
 

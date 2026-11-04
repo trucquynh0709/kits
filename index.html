@@ -7,7 +7,7 @@
     <meta name="description" content="Đặt và quản lý lịch hẹn cá nhân, tự động phát hiện trùng giờ." />
     <meta name="theme-color" content="#ece5cc" />
     <meta name="color-scheme" content="light" />
-    <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'><rect x='3' y='6' width='26' height='23' rx='5' fill='%23f6a623'/><rect x='3' y='6' width='26' height='10' rx='5' fill='%23ee8a12'/><rect x='9' y='2' width='3' height='7' rx='1.5' fill='%23e5533c'/><rect x='20' y='2' width='3' height='7' rx='1.5' fill='%23e5533c'/><text x='16' y='26' font-family='Arial' font-weight='700' font-size='12' fill='white' text-anchor='middle'>✓</text></svg>" />
+    <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'><rect x='3' y='6' width='26' height='23' rx='5' fill='%23f6a623'/><rect x='3' y='6' width='26' height='10' rx='5' fill='%23ee8a12'/><rect x='9' y='2' width='3' height='7' rx='1.5' fill='%23e5533c'/><rect x='20' y='2' width='3' height='7' rx='1.5' fill='%23e5533c'/><path d='M11 21.5l3.5 3.5 6.5-6.5' fill='none' stroke='white' stroke-width='2.6' stroke-linecap='round' stroke-linejoin='round'/></svg>" />
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro:wght@400;500;600;700;800&display=swap" />
@@ -27,7 +27,7 @@
           <img id="user-avatar" alt="" referrerpolicy="no-referrer" hidden />
           <span id="user-initial" class="avatar-fallback" aria-hidden="true"></span>
           <span id="user-name"></span>
-          <button type="button" class="btn small ghost" id="btn-logout">Đăng xuất</button>
+          <button type="button" class="btn small ghost" id="btn-logout"><i data-icon="log-out" data-size="15"></i>Đăng xuất</button>
         </div>
       </div>
     </header>
@@ -38,9 +38,9 @@
         <h1>Không bao giờ hẹn <span class="accent">hai việc</span> cùng một giờ.</h1>
         <p class="lead">Ghi lịch hẹn trong vài giây. App tự phát hiện trùng giờ và gợi ý ngay khung giờ trống gần nhất.</p>
         <ul class="features">
-          <li><span class="fi">⛔</span><div><b>Chặn trùng giờ</b><small>Kể cả chồng một phần hay qua nửa đêm</small></div></li>
-          <li><span class="fi">💡</span><div><b>Gợi ý giờ trống</b><small>Bấm một lần là form tự điền</small></div></li>
-          <li><span class="fi">🗓️</span><div><b>Lịch tháng trực quan</b><small>Ngày có hẹn được đánh dấu</small></div></li>
+          <li><span class="fi"><i data-icon="ban" data-size="20"></i></span><div><b>Chặn trùng giờ</b><small>Kể cả chồng một phần hay qua nửa đêm</small></div></li>
+          <li><span class="fi"><i data-icon="lightbulb" data-size="20"></i></span><div><b>Gợi ý giờ trống</b><small>Bấm một lần là form tự điền</small></div></li>
+          <li><span class="fi"><i data-icon="calendar-days" data-size="20"></i></span><div><b>Lịch tháng trực quan</b><small>Ngày có hẹn được đánh dấu</small></div></li>
         </ul>
       </section>
 
@@ -51,7 +51,7 @@
         <div id="google-btn" class="google-btn"></div>
         <p id="login-error" class="error" role="alert"></p>
         <div id="login-divider" class="divider"><span>hoặc</span></div>
-        <button type="button" class="btn primary" id="btn-guest">Dùng thử ngay</button>
+        <button type="button" class="btn primary" id="btn-guest">Dùng thử ngay<i data-icon="arrow-right"></i></button>
         <p class="muted small">Không cần đăng nhập · Dữ liệu lưu trên trình duyệt của bạn</p>
       </section>
     </main>
@@ -62,9 +62,9 @@
           <div class="cal-head">
             <h2 id="cal-heading">Chọn ngày</h2>
             <div class="cal-nav">
-              <button type="button" class="icon-btn" id="cal-prev" aria-label="Tháng trước">‹</button>
+              <button type="button" class="icon-btn" id="cal-prev" aria-label="Tháng trước"><i data-icon="chevron-left"></i></button>
               <span id="cal-label" class="cal-label"></span>
-              <button type="button" class="icon-btn" id="cal-next" aria-label="Tháng sau">›</button>
+              <button type="button" class="icon-btn" id="cal-next" aria-label="Tháng sau"><i data-icon="chevron-right"></i></button>
             </div>
           </div>
           <div class="cal-grid cal-weekdays" aria-hidden="true">
@@ -109,7 +109,7 @@
 
             <div id="conflict-box" class="conflict" role="alert" hidden></div>
 
-            <button type="submit" class="btn primary">Lưu lịch hẹn</button>
+            <button type="submit" class="btn primary"><i data-icon="calendar-plus"></i>Lưu lịch hẹn</button>
           </form>
         </section>
       </div>
@@ -136,7 +136,7 @@
         </div>
 
         <div id="list" aria-live="polite"></div>
-        <button type="button" class="btn link" id="btn-seed">Nạp dữ liệu mẫu để thử</button>
+        <button type="button" class="btn link" id="btn-seed"><i data-icon="plus" data-size="15"></i>Nạp dữ liệu mẫu để thử</button>
       </section>
     </main>
 

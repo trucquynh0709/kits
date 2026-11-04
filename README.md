@@ -102,6 +102,7 @@ lich-hen-mini/
 ├── src/
 │   ├── scheduler.js        # ⭐ logic thuần: validate, trùng giờ, gợi ý, trạng thái
 │   ├── calendar.js         # lưới lịch tháng, đếm lịch theo ngày
+│   ├── icons.js            # icon SVG (bộ Lucide, ISC) nhúng sẵn
 │   ├── auth.js             # đăng nhập Google (GIS), đọc/kiểm ID token, phiên đăng nhập
 │   ├── config.js           # Google Client ID
 │   ├── storage.js          # localStorage theo từng tài khoản (có chống dữ liệu hỏng)

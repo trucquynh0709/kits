@@ -13,6 +13,9 @@ import { loadAppointments, saveAppointments } from './storage.js';
 import { guestUser, loadSession, saveSession, renderGoogleButton, signOutGoogle } from './auth.js';
 import { GOOGLE_CLIENT_ID } from './config.js';
 import { monthGrid, countByDate } from './calendar.js';
+import { icon, hydrateIcons } from './icons.js';
+
+hydrateIcons();
 
 const $ = (sel) => document.querySelector(sel);
 const form = $('#appt-form');
@@ -63,7 +66,7 @@ function formatRange(a) {
 let toastTimer;
 function toast(message, isError = false) {
   const t = $('#toast');
-  t.textContent = message;
+  t.replaceChildren(icon(isError ? 'circle-alert' : 'circle-check'), el('span', { textContent: message }));
   t.className = isError ? 'toast error' : 'toast';
   t.hidden = false;
   clearTimeout(toastTimer);
@@ -113,18 +116,19 @@ function showConflicts(conflicts = [], suggestion = null) {
   if (conflicts.length === 0) return;
 
   conflictBox.append(
-    el('strong', { textContent: `⚠ Trùng giờ với ${conflicts.length} lịch hẹn:` }),
+    el('strong', {}, icon('triangle-alert', { size: 16 }), `Trùng giờ với ${conflicts.length} lịch hẹn:`),
     el('ul', {}, ...conflicts.map((c) => el('li', { textContent: `${formatRange(c)} · ${c.title}` }))),
   );
 
   if (suggestion) {
     const sameDay = suggestion.start.slice(0, 10) === suggestion.end.slice(0, 10);
     if (sameDay) {
-      const btn = el('button', {
-        type: 'button',
-        className: 'btn small',
-        textContent: `Dùng giờ trống gần nhất: ${formatRange(suggestion)}`,
-      });
+      const btn = el(
+        'button',
+        { type: 'button', className: 'btn small' },
+        icon('clock', { size: 15 }),
+        `Dùng giờ trống gần nhất: ${formatRange(suggestion)}`,
+      );
       btn.addEventListener('click', () => {
         fields.date.value = suggestion.start.slice(0, 10);
         fields.start.value = hhmm(suggestion.start);
@@ -170,8 +174,8 @@ function updateNoteCount() {
 fields.note.addEventListener('input', updateNoteCount);
 
 // ---------- danh sách ----------
-function actionButton(label, className, onClick) {
-  const b = el('button', { type: 'button', className: `btn small ${className}`, textContent: label });
+function actionButton(label, className, iconName, onClick) {
+  const b = el('button', { type: 'button', className: `btn small ${className}` }, icon(iconName, { size: 15 }), label);
   b.addEventListener('click', onClick);
   return b;
 }
@@ -201,15 +205,15 @@ function renderItem(a) {
   const actions = el('div', { className: 'actions' });
   if (a.status === STATUS.SCHEDULED) {
     actions.append(
-      actionButton('✓ Xong', 'done', () => updateStatus(a.id, STATUS.DONE, 'Đã đánh dấu hoàn thành.')),
-      actionButton('Hủy', 'danger', () => updateStatus(a.id, STATUS.CANCELLED, 'Đã hủy lịch hẹn, khung giờ được giải phóng.')),
+      actionButton('Xong', 'done', 'check', () => updateStatus(a.id, STATUS.DONE, 'Đã đánh dấu hoàn thành.')),
+      actionButton('Hủy', 'danger', 'x', () => updateStatus(a.id, STATUS.CANCELLED, 'Đã hủy lịch hẹn, khung giờ được giải phóng.')),
     );
   } else {
     const label = a.status === STATUS.DONE ? 'Bỏ đánh dấu' : 'Khôi phục';
-    actions.append(actionButton(label, '', () => updateStatus(a.id, STATUS.SCHEDULED, 'Đã khôi phục lịch hẹn.')));
+    actions.append(actionButton(label, '', 'rotate-ccw', () => updateStatus(a.id, STATUS.SCHEDULED, 'Đã khôi phục lịch hẹn.')));
   }
   actions.append(
-    actionButton('Xóa', 'danger', () => {
+    actionButton('Xóa', 'danger', 'trash', () => {
       if (confirm(`Xóa vĩnh viễn "${a.title}"?`)) {
         persist(deleteAppointment(appointments, a.id));
         toast('Đã xóa lịch hẹn.');
@@ -257,7 +261,7 @@ function render() {
     const msg = filterDate.value
       ? `Không có lịch hẹn nào vào ${formatDay(filterDate.value)}.`
       : 'Chưa có lịch hẹn nào. Hãy tạo lịch đầu tiên ở form bên trái.';
-    listEl.replaceChildren(el('p', { className: 'empty', textContent: msg }));
+    listEl.replaceChildren(el('div', { className: 'empty' }, icon('calendar-days', { size: 36 }), el('p', { textContent: msg })));
     return;
   }
 
@@ -394,7 +398,8 @@ function showApp(nextUser) {
   avatar.hidden = !user.picture;
   if (user.picture) avatar.src = user.picture;
   $('#user-initial').hidden = !!user.picture;
-  $('#user-initial').textContent = user.guest ? '?' : user.name.trim().charAt(0).toUpperCase();
+  if (user.guest) $('#user-initial').replaceChildren(icon('user', { size: 16 }));
+  else $('#user-initial').textContent = user.name.trim().charAt(0).toUpperCase();
   $('#user-chip').hidden = false;
   $('#login-view').hidden = true;
   $('#app-view').hidden = false;
