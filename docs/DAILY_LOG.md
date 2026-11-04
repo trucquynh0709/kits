@@ -29,8 +29,11 @@ Mỗi ngày gồm: **Hôm qua** đã làm gì · **Hôm nay** làm gì · **Vư�
 
 ### Ngày 5 — 08/11/2026
 - **Hôm qua:** Luồng chính chạy end-to-end.
-- **Hôm nay:** Responsive, dark mode, script e2e smoke test, chạy test thủ công.
-- **Vướng mắc:** Ảnh chụp headless hiển thị ngày theo định dạng en-US vì locale của trình duyệt headless. Trình duyệt thật dùng locale của máy nên không phải lỗi.
+- **Hôm nay:** Responsive, dark mode, script e2e smoke test, chạy test thủ công. Xem lại R1 và thêm **đăng nhập Google** (GIS phía client), tách localStorage theo tài khoản, chế độ khách, 9 unit test mới.
+- **Vướng mắc:**
+  - Ảnh chụp headless hiển thị ngày theo định dạng en-US vì locale của trình duyệt headless. Trình duyệt thật dùng locale của máy nên không phải lỗi.
+  - Headless không đăng nhập Google được, nên e2e đi bằng chế độ khách; luồng Google để test thủ công (TC-T23 → T25).
+  - Người dùng bản cũ có dữ liệu ở key chung → viết code tự chuyển dữ liệu đó sang tài khoản khách (AU-08).
 
 ### Ngày 6 — 09/11/2026
 - **Hôm qua:** Test thủ công pass toàn bộ.
@@ -48,7 +51,7 @@ Mỗi ngày gồm: **Hôm qua** đã làm gì · **Hôm nay** làm gì · **Vư�
 
 | ID | Rủi ro | Phát hiện | Ảnh hưởng | Hành động ứng phó | Kết quả |
 |---|---|---|---|---|---|
-| R1 | **Scope creep:** social login (được khuyến nghị) | N1 | Cao: cần thêm backend + OAuth mới có ý nghĩa, ước tính 1,5–2 ngày | **Cắt**, ghi vào Ngoài phạm vi kèm lý do (D9) | Giữ được thời gian cho logic lõi + test |
+| R1 | **Scope creep:** social login (được khuyến nghị) | N1 | Cao: tưởng phải có backend + OAuth, ước tính 1,5–2 ngày | N1: tạm **cắt**. N5: xem lại, chuyển sang **Google Identity Services phía client** (không backend), tách dữ liệu theo tài khoản (D9) | Có social login, tốn khoảng nửa ngày; chấp nhận giới hạn không đồng bộ nhiều máy |
 | R2 | Định nghĩa "trùng" chưa rõ: lịch nối tiếp, lịch đã xong/hủy | N1–N3 | Trung bình: sai định nghĩa thì người dùng khó chịu | Chọn khoảng nửa mở; chỉ lịch `scheduled` chiếm giờ; viết test cho từng quy tắc | TC-06, 07, 09, 10 |
 | R3 | **Thư viện:** Jest + ES modules cần thêm cấu hình | N2 | Thấp–Trung bình: mất thời gian cấu hình | **Đổi thư viện** sang `node:test` có sẵn | 0 dependency, CI đơn giản |
 | R4 | Bug khôi phục lịch đã hủy gây trùng | N3 | Cao: phá vỡ đúng tính năng chính | Kiểm tra trùng lại mỗi khi chuyển về `scheduled` | TC-30, TC-T09 |

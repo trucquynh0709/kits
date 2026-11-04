@@ -13,6 +13,7 @@ Bài toán gốc là *"tạo lịch hẹn mà không bị chồng giờ"*. MVP c
 | Danh sách nhóm theo ngày + lọc theo ngày | Người dùng cần thấy ngày nào đã kín. |
 | Đánh dấu xong / hủy / khôi phục / xóa | Vòng đời tối thiểu của một lịch hẹn. |
 | Lưu localStorage | Đủ cho dùng cá nhân, không cần server. |
+| Đăng nhập Google (social login) + chế độ khách | Theo khuyến nghị của đề. Mỗi tài khoản có dữ liệu riêng; làm hoàn toàn phía trình duyệt nên vẫn không cần backend. |
 
 Những thứ bị cắt có lý do ghi ở [README › Ngoài phạm vi](../README.md#ngoài-phạm-vi).
 
@@ -23,7 +24,10 @@ Những thứ bị cắt có lý do ghi ở [README › Ngoài phạm vi](../REA
 ```mermaid
 flowchart LR
     U(("👤 Người dùng"))
+    G[["Google Identity"]]
     subgraph SYS["Hệ thống Lịch Hẹn Mini"]
+        UC0([Đăng nhập Google / Dùng thử khách])
+        UC7([Đăng xuất])
         UC1([Tạo lịch hẹn])
         UC1a([Kiểm tra dữ liệu hợp lệ])
         UC1b([Kiểm tra trùng giờ])
@@ -34,6 +38,9 @@ flowchart LR
         UC5([Khôi phục lịch hẹn])
         UC6([Xóa lịch hẹn])
     end
+    U --- UC0
+    U --- UC7
+    UC0 --- G
     U --- UC1
     U --- UC2
     U --- UC3
@@ -48,12 +55,26 @@ flowchart LR
 
 ## 3. Sơ đồ lớp / dữ liệu
 
-Chỉ có **một thực thể** `Appointment`, nên ERD đơn giản hoá thành sơ đồ lớp kèm các module xử lý.
+Có hai thực thể: `User`, lấy từ Google ID token hoặc là tài khoản khách, và `Appointment`. Mỗi `User` có nhiều `Appointment`, lưu trong localStorage dưới key `lich-hen-mini.v1:<user.id>`.
 
 ![Class diagram](diagrams/class.png)
 
 ```mermaid
 classDiagram
+    class User {
+        +string id  "google:sub" | "guest"
+        +string name
+        +string email
+        +string picture
+        +bool guest
+    }
+    class auth_js {
+        <<module>>
+        +parseGoogleCredential(jwt, clientId, now) Result
+        +loadSession() User
+        +saveSession(user)
+        +renderGoogleButton(el, opts)
+    }
     class Appointment {
         +string id
         +string title  ≤100 ký tự
@@ -82,13 +103,16 @@ classDiagram
     }
     class storage_js {
         <<module>>
-        +loadAppointments() Appointment[]
-        +saveAppointments(list) bool
+        +loadAppointments(userId) Appointment[]
+        +saveAppointments(userId, list) bool
     }
     class app_js {
         <<module — UI/DOM>>
     }
+    User "1" --> "*" Appointment : sở hữu
     Appointment --> Status
+    app_js ..> auth_js : gọi
+    auth_js ..> User : tạo
     app_js ..> scheduler_js : gọi
     app_js ..> storage_js : gọi
     storage_js ..> Appointment : JSON trong localStorage
@@ -140,3 +164,4 @@ flowchart TD
 1. **Khôi phục lịch đã hủy.** Khi lịch A bị hủy, khung giờ của nó được giải phóng và người dùng có thể đặt lịch B vào đó. Nếu sau đó khôi phục A mà không kiểm tra thì hai lịch sẽ trùng nhau. `changeStatus` vì vậy chạy lại `findConflicts` mỗi khi đưa một lịch về `scheduled` (TC-30).
 2. **Ngày không tồn tại.** `new Date(2026, 1, 30)` tự "lăn" sang 02/03. `toMs` so lại từng thành phần để từ chối 30/02 (TC-22).
 3. **Gợi ý qua chuỗi lịch liền nhau.** Nhảy một bước là chưa đủ, vì slot mới có thể đụng tiếp lịch kế bên. Thuật toán lặp đến khi tìm được chỗ trống (TC-15).
+4. **Dữ liệu bản cũ khi thêm đăng nhập.** Bản đầu tiên lưu mọi lịch vào một key chung. Khi thêm đăng nhập, `storage.js` tự chuyển dữ liệu đó sang tài khoản khách để người dùng cũ không mất lịch (AU-08).

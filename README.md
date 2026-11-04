@@ -22,9 +22,10 @@ Người dùng ghi lịch hẹn rải rác ở giấy note, tin nhắn, ứng d�
 | Danh sách lịch hẹn theo ngày | ✅ Nhóm theo ngày, lọc theo ngày, nhãn "Hôm nay", ẩn/hiện lịch hủy | ảnh 03 |
 | Đánh dấu đã xong / hủy | ✅ Thêm Khôi phục, Bỏ đánh dấu, Xóa | ảnh 03 |
 | Kiểm tra trùng giờ | ✅ Chặn trùng, liệt kê và highlight lịch bị trùng, **gợi ý giờ trống** | ảnh 02 |
-| Test case cho tạo lịch trùng | ✅ 13 unit test riêng cho tạo lịch trùng (tổng 36) + 14 e2e + 20 test thủ công | [docs/TEST_CASES.md](docs/TEST_CASES.md) |
+| Test case cho tạo lịch trùng | ✅ 13 unit test riêng cho tạo lịch trùng (tổng 45) + 17 e2e + 25 test thủ công | [docs/TEST_CASES.md](docs/TEST_CASES.md) |
 | README + log công việc | ✅ | file này, [docs/DAILY_LOG.md](docs/DAILY_LOG.md) |
 | Demo chức năng chính | ✅ Ảnh chụp bên dưới + video | [docs/screenshots/](docs/screenshots/) |
+| Đăng nhập (khuyến nghị: social login) | ✅ **Đăng nhập Google**, mỗi tài khoản có dữ liệu riêng; có thêm chế độ khách | ảnh 00, [src/auth.js](src/auth.js) |
 | Deploy miễn phí | ⏳ Hướng dẫn ở mục 5 | link ở đầu trang |
 
 ## 3. Ảnh chụp màn hình
@@ -34,9 +35,12 @@ Người dùng ghi lịch hẹn rải rác ở giấy note, tin nhắn, ứng d�
 | ![Trùng giờ](docs/screenshots/02-conflict.png) | ![Danh sách](docs/screenshots/03-list.png) |
 | **Validation** | **Mobile** |
 | ![Validation](docs/screenshots/01-validation.png) | ![Mobile](docs/screenshots/04-mobile.png) |
+| **Đăng nhập** | |
+| ![Đăng nhập](docs/screenshots/00-login.png) | |
 
 ## 4. Chức năng
 
+0. **Đăng nhập bằng Google** (social login) hoặc **dùng thử không đăng nhập**. Mỗi tài khoản có danh sách lịch riêng, có avatar và nút đăng xuất.
 1. **Tạo lịch hẹn:** tiêu đề (bắt buộc, ≤100 ký tự), ngày, giờ bắt đầu, giờ kết thúc, ghi chú (≤500 ký tự).
 2. **Validation theo từng ô:** thiếu tiêu đề, ngày không tồn tại, giờ kết thúc ≤ giờ bắt đầu, lịch trong quá khứ, lịch dài quá 24h, ghi chú quá dài.
 3. **Kiểm tra trùng giờ:**
@@ -61,8 +65,18 @@ Yêu cầu: **Node.js ≥ 20**. Project **không có dependency**, không cần 
 git clone https://github.com/trucquynh0709/kits.git
 cd kits
 npm start          # mở http://localhost:5173
-npm test           # chạy 36 unit test
+npm test           # chạy 45 unit test
 ```
+
+**Bật đăng nhập Google** (khoảng 5 phút; chưa bật thì app vẫn chạy ở chế độ khách):
+
+1. Vào [Google Cloud Console › Credentials](https://console.cloud.google.com/apis/credentials). Tạo project nếu chưa có.
+2. Nếu được hỏi, cấu hình *OAuth consent screen*: chọn External, điền tên app và email.
+3. *Create credentials* → *OAuth client ID* → loại **Web application**.
+4. Ở *Authorized JavaScript origins*, thêm `http://localhost` và `http://localhost:5173`, cùng domain deploy (ví dụ `https://xxx.vercel.app`).
+5. Copy Client ID dán vào [src/config.js](src/config.js): `export const GOOGLE_CLIENT_ID = '....apps.googleusercontent.com';`
+
+Client ID là thông tin công khai, commit lên repo không sao. Đây **không** phải client secret.
 
 Chạy e2e trên trình duyệt thật (Edge/Chrome headless; script tự chụp lại ảnh vào `docs/screenshots/`):
 
@@ -86,9 +100,13 @@ lich-hen-mini/
 ├── css/style.css
 ├── src/
 │   ├── scheduler.js        # ⭐ logic thuần: validate, trùng giờ, gợi ý, trạng thái
-│   ├── storage.js          # đọc/ghi localStorage (có chống dữ liệu hỏng)
+│   ├── auth.js             # đăng nhập Google (GIS), đọc/kiểm ID token, phiên đăng nhập
+│   ├── config.js           # Google Client ID
+│   ├── storage.js          # localStorage theo từng tài khoản (có chống dữ liệu hỏng)
 │   └── app.js              # DOM, sự kiện, render
-├── tests/scheduler.test.js # 36 unit test (node:test)
+├── tests/
+│   ├── scheduler.test.js   # 36 unit test logic lịch hẹn
+│   └── auth.test.js        # 9 unit test đăng nhập + tách dữ liệu
 ├── scripts/
 │   ├── serve.js            # static server, không dependency
 │   └── e2e-smoke.js        # e2e qua DevTools Protocol
@@ -110,6 +128,7 @@ lich-hen-mini/
 - **localStorage thay vì SQLite/backend:** app dùng cá nhân trên một thiết bị, không cần server, chạy được offline. Lớp `storage.js` tách riêng để sau này dễ thay.
 - **Tách logic thuần khỏi UI:** phần quan trọng nhất (trùng giờ) test được mà không cần trình duyệt, và hàm nhận `now` làm tham số nên test luôn cho cùng kết quả.
 - **`node:test` thay vì Jest:** có sẵn trong Node, không cần cấu hình ES modules, 0 dependency.
+- **Social login bằng Google Identity Services, không backend:** chỉ cần một Client ID; app đọc ID token ngay trên trình duyệt để biết người dùng là ai và tách dữ liệu theo tài khoản. Nhanh hơn nhiều so với dựng Firebase hay server riêng.
 
 Đầy đủ 10 quyết định và đánh đổi ở [docs/DECISIONS.md](docs/DECISIONS.md).
 
@@ -121,16 +140,20 @@ Những mục dưới đây **cố ý không làm** để luồng chính chạy 
 |---|---|
 | Gửi email / thông báo nhắc hẹn | Đề bài ghi rõ không cần; cần backend và job hẹn giờ |
 | Tích hợp Google Calendar | Đề bài ghi rõ không cần |
-| **Social login** | Đề chỉ khuyến nghị. Dữ liệu đang ở localStorage nên đăng nhập không đồng bộ được gì nếu không có thêm backend (Firebase Auth + Firestore), ước tính tốn 1,5–2 ngày. Xem rủi ro R1 |
+| Đồng bộ lịch theo tài khoản giữa nhiều máy | Đăng nhập hiện chỉ tách dữ liệu trên **cùng một trình duyệt**. Muốn đồng bộ thì cần backend (ví dụ Firestore). Xem rủi ro R1 |
+| Kiểm chữ ký ID token phía server | Không có server. Hiện app kiểm `iss`/`aud`/`exp` phía client (xem D9) |
+| Đăng nhập Facebook/GitHub | Một nhà cung cấp là đủ cho MVP |
 | Sửa lịch hẹn đã tạo | Hiện làm bằng cách xóa rồi tạo lại. Logic đã sẵn sàng (`findConflicts` có `ignoreId`), chỉ thiếu UI |
 | Lịch lặp lại (hằng tuần...) | Làm thuật toán trùng giờ phức tạp hơn nhiều |
-| Đồng bộ nhiều thiết bị, chia sẻ lịch | Cần backend |
+| Chia sẻ lịch cho người khác | Cần backend |
 | Chế độ xem lịch tháng/tuần dạng lưới | Danh sách theo ngày đã đáp ứng yêu cầu |
 | Nhập lịch qua nửa đêm trên form | Logic **đã hỗ trợ** (có test TC-12), nhưng form chỉ có một ô ngày |
 
 ## 9. Hạn chế hiện tại
 
 - Dữ liệu chỉ nằm trong trình duyệt đang dùng; xóa dữ liệu trình duyệt là mất. Chưa có xuất/nhập file.
+- Đăng nhập Google chỉ dùng để nhận diện và tách dữ liệu, **không phải cơ chế bảo mật**: ai dùng chung máy vẫn đọc được localStorage qua DevTools. Phiên đăng nhập được nhớ cho tới khi bấm Đăng xuất.
+- Đăng nhập Google chỉ chạy trên domain đã khai báo trong Google Console. Test e2e headless dùng chế độ khách; luồng Google cần kiểm thủ công.
 - Không lưu múi giờ: nếu đổi múi giờ máy thì giờ hiển thị giữ nguyên theo giờ đã nhập.
 - Không cho cố ý đặt chồng lịch, ví dụ hai việc có thể làm song song.
 - Kiểm tra trùng là O(n) mỗi lần tạo; đủ nhanh cho vài nghìn lịch nhưng không tối ưu cho dữ liệu lớn.
@@ -142,7 +165,8 @@ Những mục dưới đây **cố ý không làm** để luồng chính chạy 
 - Phần lõi (trùng giờ) được thiết kế có lý do rõ ràng: khoảng nửa mở, quy tắc lịch nào chiếm giờ. Mỗi quy tắc đều có test.
 - Xử lý được một **case khó** dễ bỏ sót: khôi phục lịch đã hủy khi khung giờ đã bị chiếm (TC-30, E2E-14).
 - Có thêm **gợi ý giờ trống**, nên app không chỉ báo lỗi mà còn giúp người dùng đặt được lịch.
-- 3 lớp kiểm thử (36 unit, 14 e2e, 20 thủ công), có CI. Project 0 dependency nên ai clone về cũng chạy được ngay.
+- Có social login mà vẫn giữ được kiến trúc không backend, và dữ liệu cũ được chuyển sang tài khoản khách tự động.
+- 3 lớp kiểm thử (45 unit, 17 e2e, 25 test thủ công, trong đó 3 case Google chờ test với Client ID thật), có CI. Project 0 dependency nên ai clone về cũng chạy được ngay.
 - Phạm vi được quản lý chủ động: phần cắt đều có lý do, rủi ro được ghi lại.
 
 **Điểm yếu**
@@ -153,7 +177,7 @@ Những mục dưới đây **cố ý không làm** để luồng chính chạy 
 **Nếu có thêm 1 tuần**
 1. Sửa lịch hẹn, kiểm tra trùng có loại trừ chính nó (logic đã sẵn).
 2. Xuất/nhập JSON hoặc `.ics` để sao lưu.
-3. Social login + Firestore để đồng bộ nhiều thiết bị.
+3. Thêm Firestore (hoặc API + SQLite) để đồng bộ lịch theo tài khoản giữa nhiều thiết bị, kiểm chữ ký token phía server.
 4. Chế độ xem tuần dạng lưới, kéo thả để đổi giờ.
 5. Tùy chọn "vẫn lưu dù trùng" cho các việc làm song song.
 
@@ -162,7 +186,7 @@ Những mục dưới đây **cố ý không làm** để luồng chính chạy 
 - **Làm rõ đề trước khi code:** đề chỉ ghi "ngày giờ", nhưng muốn kiểm tra trùng thì phải có khoảng thời gian. Phát hiện điều này ngay ngày 1 nên tránh được việc phải làm lại.
 - **Viết test cho trường hợp biên làm lộ lỗi thiết kế:** khi viết test chuyển trạng thái mới thấy lỗi khôi phục lịch gây trùng (R4).
 - **`Date` của JavaScript dễ sai ngầm:** `new Date(2026, 1, 30)` không báo lỗi. Cần tự kiểm tra lại.
-- **Cắt sớm tốt hơn làm dở:** bỏ social login từ ngày 1 nên có đủ thời gian cho test và tài liệu.
+- **Tìm giải pháp nhỏ hơn trước khi cắt:** ban đầu định cắt social login vì tưởng phải dựng backend (1,5–2 ngày). Xem lại thì Google Identity Services chạy được hoàn toàn phía client, chỉ mất khoảng nửa ngày, nên đã đưa lại vào phạm vi. Bài học: khi một tính năng có vẻ quá to, hãy tìm phiên bản tối thiểu của nó trước khi bỏ hẳn.
 
 ## 12. Tài liệu
 
