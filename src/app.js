@@ -666,7 +666,7 @@ function setView(name) {
   $('#btn-intro').hidden = name !== 'app';
   $('#btn-new').hidden = name !== 'app';
   $('#user-chip').hidden = !(name === 'app' && user);
-  for (const id of ['#hero-start', '#closing-start']) $(id).textContent = user ? 'Vào ứng dụng' : 'Bắt đầu sử dụng';
+  $('#hero-start').textContent = user ? 'Vào ứng dụng' : 'Bắt đầu sử dụng';
   if (name !== 'app') {
     closeForm();
     if (detailDialog.open) detailDialog.close();
@@ -688,7 +688,7 @@ function route() {
   }
 }
 
-// Mục lục trong trang giới thiệu cũng đổi hash (#van-de…): chỉ điều hướng khi hash là một "trang".
+// Chỉ điều hướng khi hash là một "trang" (bỏ qua các hash khác).
 addEventListener('hashchange', () => {
   const h = location.hash;
   if (h === '' || h === ROUTES.login || h === ROUTES.intro) {
@@ -734,7 +734,6 @@ function signOut() {
 
 const startOrContinue = () => (user ? goHome() : (location.hash = ROUTES.login));
 $('#hero-start').addEventListener('click', startOrContinue);
-$('#closing-start').addEventListener('click', startOrContinue);
 $('#nav-app').addEventListener('click', goHome);
 $('#btn-intro').addEventListener('click', () => (location.hash = ROUTES.intro));
 $('#auth-back').addEventListener('click', goHome);

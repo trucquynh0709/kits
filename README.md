@@ -5,7 +5,7 @@
 Website đặt và quản lý lịch hẹn cá nhân, **tự động chặn lịch trùng giờ và gợi ý khung giờ trống gần nhất**.
 
 - 🔗 **Bản chạy thực tế:** https://kits-opal.vercel.app
-- 📄 **Trang chủ = trang giới thiệu dự án** (mô tả, cách hoạt động, use case, thiết kế, kiểm thử, phạm vi, tự đánh giá), đăng nhập ngay trên trang; đăng nhập xong vào thẳng ứng dụng. Trang này thay cho video demo theo yêu cầu của giảng viên.
+- 📄 **Trang chủ:** giới thiệu ngắn gọn ứng dụng kèm nút "Bắt đầu sử dụng" để đăng nhập; đăng nhập xong vào thẳng ứng dụng. Tài liệu chi tiết (kiến trúc, ERD, hướng dẫn sử dụng, kiểm thử) nộp riêng dạng Google Docs.
 - 💻 **Repository:** https://github.com/trucquynh0709/kits
 
 ---
